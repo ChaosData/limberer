@@ -34,6 +34,10 @@ from collections.abc import Callable
 import chevron
 import weasyprint
 import markdown # temporary
+import subprocess
+import io
+
+from .pf import entrypoint
 
 # disable remote url resolution and path traversal
 def fetcher(url):
@@ -68,6 +72,52 @@ chevron.renderer._get_key = fake_get_key
 # 'Hello, no soup for you.!'
 # >>> chevron.render('Hello, {{#mustache}}{{#upper}}{{.}}{{/upper}}{{/mustache}}!', {'mustache': 'world'})
 # 'Hello, no soup for you!!'
+
+def convert(path, opts, toc):
+  #print("convert(" + repr(path) + ")")
+  proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
+  if proc1.returncode != 0:
+    sys.stderr.write("error running initial pandoc command: \n")
+    sys.stderr.buffer.write(proc1.stderr)
+    sys.stderr.write("\n")
+    sys.exit(1)
+  o1 = proc1.stdout.decode('utf-8')
+
+  # run the panflute filter
+  sys.argv = ["html"]
+  iw = io.StringIO(o1)
+  ow = io.StringIO("")
+
+  headers = []
+  _headers = []
+  r = entrypoint(iw, ow, _headers)
+  ow.seek(0)
+  o2 = ow.read()
+
+  if len(_headers) == 1:
+    headers = _headers[0]
+
+  #print(repr(headers))
+  header_level = int(opts.get('toc_header_level', ['1'])[0])
+
+  for h in headers:
+    if h.level <= header_level:
+      toc.append(opts | {"name": h.identifier, "issubsection": h.level != 1})
+
+  # pass back to pandoc
+  proc2 = subprocess.run(['pandoc', '-f', 'json',
+                          '-t', 'html',
+                          '--wrap=none'],
+                         input=o2, text=True,
+                         capture_output=True)
+  if proc2.returncode != 0:
+    sys.stderr.write("error running initial pandoc command: \n")
+    sys.stderr.write(proc2.stderr)
+    sys.stderr.write("\n")
+    sys.exit(1)
+  content = proc2.stdout
+  return content
+
 
 def parse_args():
   parser = argparse.ArgumentParser(
@@ -141,10 +191,14 @@ def build(args):
     if section['type'] == 'section':
       # markdown
       section_name = section['name']
-      content = open('sections/{}.md'.format(section['name']), 'r').read()
+      section_path = 'sections/{}.md'.format(section['name'])
+      content = open(section_path, 'rb').read()
+      #print(repr(content))
+      content = content.decode('utf-8')
       md = markdown.Markdown(extensions=["meta"])
       html = md.convert(content)
       opts = md.Meta | section
+      html = convert(section_path, opts, toc)
       opts['html'] = html
       opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
       template = section_template
@@ -154,8 +208,8 @@ def build(args):
       #print(opts)
       r = chevron.render(template, opts)
       sections.append(r)
-      if "title" in section:
-        toc.append(opts | {"issubsection": False})
+      #if "title" in section:
+        #toc.append(opts | {"issubsection": False})
     elif section['type'] == 'toc':
       # defer until after we get through everything else
       sections.append(section)
