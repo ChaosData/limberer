@@ -173,7 +173,8 @@ def build(args):
 
   dir, fname = os.path.split(config)
   wd = os.getcwd()
-  os.chdir(dir)
+  if dir != "":
+    os.chdir(dir)
 
   config = toml.loads(open(fname, 'r').read())
   config['config'] = config # we occasionally need top.down.variable.paths to resolve abiguity
