@@ -1,0 +1,37 @@
+    <article id="cover">
+      <div id="title">
+        <h1>
+          {{title}}
+        </h1>
+        {{#subheading}}
+        <br>
+        <h2>
+          {{subheading}}
+        {{/subheading}}
+        {{#version}}
+          <br>
+          {{version}}
+        {{/version}}
+        </h2>
+        {{#label}}
+        <br><br>
+        <b style="font-size: 20pt">{{label}}</b>
+        {{/label}}
+      </div>
+      <div id="who">
+        <div style="width: 40%;">
+          <p>
+          {{#authors}}
+            {{name}}<br>
+          {{/authors}}
+          </p>
+        </div>
+        <div style="width: 40%;">
+          <p>
+          {{#authors}}
+            {{email}}<br>
+          {{/authors}}
+          </p>
+        </div>
+      </div>
+    </article>

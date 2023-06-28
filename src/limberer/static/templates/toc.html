@@ -1,0 +1,17 @@
+    <article id="contents">
+      <h3>Table of Contents</h3>
+      <ul class="toc">
+      {{#sections}}
+      {{^issubsection}}
+        <!--<li><a class="toc" href="#{{name}}"><div href="#{{name}}" class="toctext"></div><div href="#{{name}}" class="tocpagenr"></div></a></li>-->
+        <li><a class="toc" href="#{{name}}">{{title}}<div href="#{{name}}" class="tocpagenr"></div></a></li>
+      {{/issubsection}}
+      {{#issubsection}}
+        <ul class="toc">
+          <!--<li><a class="toc" href="#{{name}}"><div href="#{{name}}" class="toctext"></div><div href="#{{name}}" class="tocpagenr"></div></a></li>-->
+          <li><a class="toc" href="#{{name}}">{{title}}<div href="#{{name}}" class="tocpagenr"></div></a></li>
+        </ul>
+      {{/issubsection}}
+      {{/sections}}
+      </ul>
+    </article>

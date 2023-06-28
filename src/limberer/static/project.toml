@@ -1,0 +1,16 @@
+title = ""
+subheading = ""
+#version = ""
+#label = ""
+
+authors = [
+  { name = "", email = "" },
+]
+
+sections = [
+  { type = "cover" },
+  { type = "toc" },
+#  { name = "example", type = "section", title = "Example" },
+#  { name = "example2", type = "section", title = "Example2" },
+]
+

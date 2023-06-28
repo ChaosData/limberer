@@ -1,0 +1,74 @@
+article {
+  break-before: always;
+}
+article.nobreak {
+  break-before: avoid;
+}
+
+div.pagebreak {
+  break-after: page;
+}
+div.columnbreak {
+  break-after: column;
+}
+
+ul.toc {
+  padding-left: 0px;
+  list-style-type: none;
+}
+ul.toc>ul {
+  padding-left: 1rem;
+  list-style-type: none;
+}
+
+ul.toc li {
+  margin-top: 0.25em;
+}
+ul.toc li::before {
+  content: none;
+}
+a.toc {
+  display: flex;
+  text-decoration: none;
+  color: black;
+}
+div.toctext::before {
+  content: target-text(attr(href));
+}
+div.toctext {
+  display: flex;
+}
+div.tocpagenr {
+  border-bottom: 1pt dotted black;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+div.tocpagenr::after {
+  content: target-counter(attr(href), page);
+}
+
+li a.title {
+  color: inherit;
+  text-decoration-line: inherit;
+}
+li a.title::before {
+  content: target-text(attr(href));
+}
+li a.title::after {
+  color: black;
+  content: target-counter(attr(href), page);
+  float: right;
+}
+
+.columns section {
+  columns: 2;
+  column-gap: 1cm;
+  padding-top: 1cm;
+}
+.columns section p {
+  text-align: justify;
+}
+.columns section p:first-of-type {
+  font-weight: 700;
+}

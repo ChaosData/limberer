@@ -1,0 +1,10 @@
+    <article id="{{name}}" class="{{#columns}}columns {{/columns}}{{#classes}}{{.}} {{/classes}}">
+    {{#columns}}
+      <h1 id="columns-title">{{opts.title}}</h1>
+      <section>
+    {{/columns}}
+{{& html}}
+    {{#columns}}
+      </section>
+    {{/columns}}
+    </article>
