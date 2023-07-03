@@ -1,0 +1,48 @@
+@page {
+  @bottom-right {
+    background: #B57EDC;
+    color: #ffffff;
+  }
+  @bottom-center {
+    content: "© <year> Example Corp.";
+  }
+}
+
+html {
+  color: black;
+  font-family: Comic Sans MS;
+}
+
+table, th, td {
+  border: 1px solid #c0c0c0;
+}
+
+th {
+  color: white;
+  background-color: black;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #E7E9EB;
+}
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+td {
+  min-height: 20px;
+}
+
+#cover>div#who {
+  background: #B57EDC;
+  color: white;
+}
+
+article ul li::before {
+  color: #E6E6FA;
+}
+
+.footnotes hr {
+  border: 1px solid red;
+}

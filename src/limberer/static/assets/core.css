@@ -1,5 +1,6 @@
 @page {
   @top-left {
+    /* logo */
     background: url(logo.svg) no-repeat center;
     background-size: 1in;
     width: 1.75in;
@@ -10,16 +11,18 @@
     margin-left: -0.6in;
   }
   @top-center {
-    background: #000000;
+    /* header line */
+    background: black;
     content: '';
-    height: .01in;
-    opacity: .5;
+    height: 0.01in;
+    opacity: 0.5;
     width: 7.4375in;
     margin-bottom: 0.25in;
     margin-left: 0in;
   }
   @bottom-right {
-    background: #B57EDC;
+    /* page number */
+    background: black;
     color: #ffffff;
     content: counter(page);
     height: 0.4in;
@@ -27,8 +30,9 @@
     width: 0.4in;
   }
   @bottom-center {
-    /*content: "© <year> Example Corp.",*/
-    color: #000000;
+    content: none;
+    color: black;
+    opacity: 0.5;
     font-size: 6pt;
     text-align: left;
     margin-top: 0.25in;
@@ -43,18 +47,12 @@
 }
 @page cover {
   @top-left {
-    background: url(logo.svg) no-repeat center;
-    background-size: 1in;
-    width: 1.75in;
-    height: auto;
-    content: '';
-    display: inline-block;
-    float: left;
+    /* fixup logo placement due to different margins on cover */
     margin-left: 0.4in;
   }
   @top-right { content: none }
   @bottom-left { content: none }
-  @bottom-center { background: #ff0000; width: 100%; content: none }
+  @bottom-center { width: 100%; content: none }
   @bottom-right { content: none }
   margin-left: 0;
   margin-right: 0;
@@ -62,7 +60,7 @@
 }
 
 html {
-  color: #393939;
+  color: black;
   font-family: Arial;
   font-size: 10pt;
   font-weight: 300;
@@ -70,7 +68,6 @@ html {
 }
 
 strong {
-  font-family: Arial;
   font-weight: bold;
 }
 
@@ -81,7 +78,7 @@ body {
 
 #title {
   page: cover;
-  margin: 0.5in 1in 0 1in;
+  margin: 0.5in 1in 0in 1in;
 }
 
 article {
@@ -110,9 +107,6 @@ h3, h4 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
-p {
-  font-size: 10pt;
-}
 h1 {
   font-size: 30pt;
   string-set: heading content();
@@ -126,6 +120,9 @@ h3 {
 }
 h4 {
   font-size: 11pt;
+}
+p {
+  font-size: 10pt;
 }
 
 table {
@@ -178,7 +175,7 @@ td {
 #cover>div#title {
 }
 #cover>div#who {
-  background: #B57EDC;
+  background: black;
   color: white;
   white-space: pre-wrap;
   min-height: 2in;
@@ -189,6 +186,55 @@ td {
   position: absolute;
   bottom: 0px;
   width: 100%;
+}
+
+ul.toc {
+  padding-left: 0px;
+  list-style-type: none;
+}
+ul.toc>ul {
+  padding-left: 1rem;
+  list-style-type: none;
+}
+
+ul.toc li {
+  margin-top: 0.25em;
+}
+ul.toc li::before {
+  content: none;
+}
+a.toc {
+  display: flex;
+  text-decoration: none;
+  color: black;
+}
+div.toctext::before {
+  content: target-text(attr(href));
+}
+div.toctext {
+  display: flex;
+}
+div.tocpagenr {
+  border-bottom: 1pt dotted black;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+div.tocpagenr::after {
+  content: target-counter(attr(href), page);
+}
+
+li a.title {
+  color: inherit;
+  text-decoration-line: inherit;
+}
+li a.title::before {
+  content: target-text(attr(href));
+}
+li a.title::after {
+  color: black;
+  content: target-counter(attr(href), page);
+  float: right;
 }
 
 article {
@@ -226,10 +272,46 @@ article li {
 }
 
 article ul li::before {
-  color: #E6E6FA;
+  color: black;
   content: '• ';
   font-size: 10pt;
   padding-right: 1em;
+}
+
+.columns section {
+  columns: 2;
+  column-gap: 1cm;
+  padding-top: 0;
+}
+.columns section p {
+  text-align: justify;
+}
+.columns section p:first-of-type {
+  font-weight: 700;
+}
+
+article figure {
+  text-align: center;
+}
+
+article figure>figcaption::before {
+  counter-increment: figurecount;
+  content: "Figure " counter(figurecount) ": ";
+}
+
+article figure>img {
+  width: 100%;
+}
+
+div .two-col-fig {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+div .two-col-fig>figure {
+  width: 40%;
 }
 
 .footnotes {
@@ -264,27 +346,5 @@ article ul li::before {
   color: inherit;
 }
 
-article figure {
-  text-align: center;
-}
 
-article figure>figcaption::before {
-  counter-increment: figurecount;
-  content: "Figure " counter(figurecount) ": ";
-}
-
-article figure>img {
-  width: 100%;
-}
-
-div .two-col-fig {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-div .two-col-fig>figure {
-  width: 40%;
-}
 
