@@ -1,16 +1,16 @@
-title = ""
-subheading = ""
-#version = ""
+title = "Example Document"
+subheading = "Limberer Made Easy"
+version = "0.1 DRAFT"
 #label = ""
 
 authors = [
-  { name = "", email = "" },
+  { name = "Example Person", email = "example@example.com" },
 ]
 
 sections = [
   { type = "cover" },
   { type = "toc" },
-#  { name = "example", type = "section", title = "Example" },
-#  { name = "example2", type = "section", title = "Example2" },
+  { name = "example", type = "section", title = "Example" },
+  { name = "example2", type = "section", title = "Example2" },
 ]
 

@@ -192,17 +192,18 @@ td {
 }
 
 article {
-  display: flex;
-  flex-direction: column;
   height: 8.5in;
   width: 6.5in;
-  align-items: flex-start;
+}
+
+article:not(#cover) {
+  display: flex;
+  flex-direction: column;
 }
 
 article>div.article-body {
   width: 6.5in;
   flex: 1 1 auto;
-  align-self: stretch;
 }
 
 article ul {

@@ -1,6 +1,6 @@
 [project]
 name = "limberer"
-version = "0.2.4"
+version = "0.2.5"
 authors = [
   { name = "Jeff Dileo", email = "jtdileo@gmail.com" },
 ]
@@ -43,4 +43,4 @@ include-package-data = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-"limberer.static" = ["*", "assets/*", "custom/*", "sections/*", "templates/*"]
+"limberer.static" = ["*", "assets/*", "custom/*", "sections/*", "templates/*", "images/*"]

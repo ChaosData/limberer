@@ -37,6 +37,7 @@ import markdown # temporary
 import subprocess
 import io
 from bs4 import BeautifulSoup
+import re
 
 from .pf import entrypoint
 
@@ -76,6 +77,7 @@ chevron.renderer._get_key = fake_get_key
 
 
 footnotecount = 1
+isheader = re.compile('h[1-9]')
 
 def convert(path, opts, toc, args):
   #print("convert(" + repr(path) + ")")
@@ -230,6 +232,14 @@ def build(args):
       html = convert(section_path, opts, toc, args)
       footnotes = ""
       soup = BeautifulSoup(html, 'html.parser')
+      _sns = soup.find_all(lambda e: e.name == 'section' and e.attrs.get('id')!=None)
+      for _sn in _sns:
+        _snc = [c for c in _sn.children if c != "\n"]
+        if len(_snc) > 0:
+          if re.match(isheader, _snc[0].name):
+            _snc[0]['id'] = _sn['id']
+            del _sn['id']
+
       _fns = soup.find(id="footnotes")
       if _fns is not None:
         _fns = _fns.extract()
