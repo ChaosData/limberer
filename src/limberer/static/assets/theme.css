@@ -190,29 +190,50 @@ td {
   width: 100%;
 }
 
-ul {
+article ul {
   list-style: none;
   padding-left: 0;
 }
 
 /*weasyprint currently gets this wrong: https://github.com/Kozea/WeasyPrint/issues/1557*/
-ol {
+article ol {
   list-style-position: outside;
   padding-left: 0;
   margin-left: 1rem;
 }
-ol li::before {
+article ol li::before {
   content: "\00a0\00a0\00a0";
 }
 
-li {
+article li {
   line-height: 1.5;
 }
 
-ul li::before {
+article ul li::before {
   color: #E6E6FA;
   content: '• ';
   font-size: 10pt;
   padding-right: 1em;
+}
+
+.footnotes {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.footnotes ol {
+  list-style-position: unset;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.footnotes ol li {
+  content: '';
+  line-height: 1;
+}
+.footnotes ol li::before {
+  content: none;
+  line-height: 1;
 }
 

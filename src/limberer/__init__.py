@@ -131,7 +131,9 @@ def parse_args():
   create = subparsers.add_parser('create')
   create.add_argument('project', metavar='<project>', type=str,
                       help="Name of project to create.")
-
+  create.add_argument('-t', '--template', metavar='<path>', type=str,
+                      default="",
+                      help='Create from alternative template path instead of the built-in default.')
   build = subparsers.add_parser('build')
   parser.add_argument('-d', '--debug', action='store_true',
                       help='Debug output.')
@@ -155,12 +157,21 @@ def main():
 
     modpath = os.path.dirname(os.path.abspath(__file__))
     staticpath = os.path.join(modpath, "static")
-
-    shutil.copytree(staticpath, absprojpath)
+    templatepath = None
+    if args.template == "":
+      templatepath = staticpath
+    else:
+      templatepath = args.template
+    shutil.copytree(templatepath, absprojpath)
 
     projname = os.path.basename(absprojpath)
-    os.rename(os.path.join(absprojpath, "project.toml"),
-              os.path.join(absprojpath, projname + ".toml"))
+    if os.path.exists(os.path.join(absprojpath, "project.toml")):
+      os.rename(os.path.join(absprojpath, "project.toml"),
+                os.path.join(absprojpath, projname + ".toml"))
+    else:
+      print("project.toml not found in template path " + repr(args.template) + ".... using default.")
+      shutil.copyfile(os.path.join(staticpath, "project.toml"),
+                os.path.join(absprojpath, projname + ".toml"))
 
 def build(args):
   config = args.config
@@ -200,7 +211,14 @@ def build(args):
       html = md.convert(content)
       opts = md.Meta | section
       html = convert(section_path, opts, toc)
+      footnotes = ""
+      footnote_key = '<aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">'
+      hsplit = html.split(footnote_key)
+      if len(hsplit) == 2:
+        html = hsplit[0]
+        footnotes = footnote_key + hsplit[1]
       opts['html'] = html
+      opts['footnotes'] = footnotes
       opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
       template = section_template
       if "alt" in section:
