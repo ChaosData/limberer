@@ -6,7 +6,9 @@ columns: true
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat faucibus vestibulum.
 Mauris varius orci quam. Nam dui mauris, dictum at elementum at, mollis pulvinar est.
-Nunc lobortis pharetra erat, id rutrum lorem malesuada in.
+Nunc lobortis pharetra erat, id rutrum lorem malesuada in.[^ccc]
+
+[^ccc]: foo
 
 ## BBB
 
@@ -14,7 +16,9 @@ Phasellus id nisl nec arcu tempor ultricies non id tortor. Mauris ex nibh, viver
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id maximus diam. Cras molestie nisl vitae iaculis convallis.
 Vivamus molestie vitae nisl sed interdum. Nunc aliquam massa rhoncus finibus convallis.
 Vivamus sed vulputate risus. Nunc dignissim magna velit, quis lobortis ex volutpat eget.
-Proin dictum mauris condimentum consequat faucibus.
+Proin dictum mauris condimentum consequat faucibus.[^2]
+
+[^2]: bar
 
 ## CCC
 

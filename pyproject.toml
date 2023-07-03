@@ -24,6 +24,7 @@ dependencies = [
   "toml",
   "markdown",
   "pillow",
+  "beautifulsoup4",
 ]
 
 [project.urls]

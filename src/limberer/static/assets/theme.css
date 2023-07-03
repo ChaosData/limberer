@@ -223,13 +223,11 @@ article ul li::before {
 }
 
 .footnotes ol {
-  list-style-position: unset;
   padding-left: 0;
   margin-left: 0;
 }
 
 .footnotes ol li {
-  content: '';
   line-height: 1;
 }
 .footnotes ol li::before {

@@ -34,7 +34,6 @@ import base64
 from PIL import Image
 
 titlecounter = 0
-
 headers = []
 
 def stringify(content):
@@ -57,6 +56,9 @@ def header(elem, doc):
     #  fd.write(repr(elem) + "\n")
     headers.append(elem)
     elem.identifier = elem.identifier + str(len(headers))
+  #elif isinstance(elem, pf.Note):
+  #  print("footnote: " + repr(elem))
+  #  pass
   elif isinstance(elem, pf.CodeBlock):
     code = elem.text.encode()
     classes = elem.classes

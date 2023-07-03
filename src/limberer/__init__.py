@@ -36,6 +36,7 @@ import weasyprint
 import markdown # temporary
 import subprocess
 import io
+from bs4 import BeautifulSoup
 
 from .pf import entrypoint
 
@@ -73,7 +74,11 @@ chevron.renderer._get_key = fake_get_key
 # >>> chevron.render('Hello, {{#mustache}}{{#upper}}{{.}}{{/upper}}{{/mustache}}!', {'mustache': 'world'})
 # 'Hello, no soup for you!!'
 
-def convert(path, opts, toc):
+
+footnotecount = 1
+
+
+def convert(path, opts, toc, args):
   #print("convert(" + repr(path) + ")")
   proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
   if proc1.returncode != 0:
@@ -82,6 +87,9 @@ def convert(path, opts, toc):
     sys.stderr.write("\n")
     sys.exit(1)
   o1 = proc1.stdout.decode('utf-8')
+
+  if args.debug:
+    print(o1)
 
   # run the panflute filter
   sys.argv = ["html"]
@@ -96,6 +104,9 @@ def convert(path, opts, toc):
 
   if len(_headers) == 1:
     headers = _headers[0]
+
+  if "columns" in opts:
+    toc.append(opts | {"name": opts['section_name'] + "-columns-title", "issubsection": False})
 
   #print(repr(headers))
   header_level = int(opts.get('toc_header_level', ['1'])[0])
@@ -174,6 +185,8 @@ def main():
                 os.path.join(absprojpath, projname + ".toml"))
 
 def build(args):
+  global footnotecount
+
   config = args.config
   if not os.path.exists(config):
     sys.stderr.write(f"error: '{config}' not found.\n")
@@ -210,25 +223,43 @@ def build(args):
       md = markdown.Markdown(extensions=["meta"])
       html = md.convert(content)
       opts = md.Meta | section
-      html = convert(section_path, opts, toc)
+      opts['section_name'] = section_name
+      html = convert(section_path, opts, toc, args)
       footnotes = ""
-      footnote_key = '<aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">'
-      hsplit = html.split(footnote_key)
-      if len(hsplit) == 2:
-        html = hsplit[0]
-        footnotes = footnote_key + hsplit[1]
+      soup = BeautifulSoup(html, 'html.parser')
+      _fns = soup.find(id="footnotes")
+      if _fns is not None:
+        _fns = _fns.extract()
+        _fns.ol['start'] = str(footnotecount)
+        _fns.ol['style'] = f"counter-reset:list-item {footnotecount}; counter-increment:list-item -1;"
+        __fns = [c for c in _fns.ol.children if c != "\n"]
+        footnotecount += len(__fns)
+        del _fns['id']
+        for __fn in __fns:
+          id = __fn['id']
+          nid = section_name + "-" + id
+          __fn['id'] = nid
+          __fnx = soup.find(id=id)
+          if __fnx is not None:
+            __fnx['id'] = nid
+        for _a in soup.find_all(class_="footnote-ref"):
+          _a['id'] = section_name + "-" + _a['id']
+          _a['href'] = '#' + section_name + "-" + _a['href'][1:]
+          print(_a)
+        for _a in _fns.find_all(class_="footnote-back"):
+          _a['href'] = '#' + section_name + "-" + _a['href'][1:]
+
+        footnotes = str(_fns)
+        html = str(soup)
+
       opts['html'] = html
       opts['footnotes'] = footnotes
       opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
       template = section_template
       if "alt" in section:
         template = open('templates/{}.html'.format(section['alt']), 'r').read()
-      #r = chevron.render(template, {"name": section['name'], "html": html})
-      #print(opts)
       r = chevron.render(template, opts)
       sections.append(r)
-      #if "title" in section:
-        #toc.append(opts | {"issubsection": False})
     elif section['type'] == 'toc':
       # defer until after we get through everything else
       sections.append(section)

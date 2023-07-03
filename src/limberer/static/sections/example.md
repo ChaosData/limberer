@@ -10,10 +10,13 @@ toc_header_level: 2
 
 Hi there.
 
-* some
-* bullets
+* some[^aaa]
+* bullets[^bbb]
 * <a href="#example">#Example</a>
 * <a href="#wat" class="title"></a>
+
+[^aaa]: <https://example.com>
+[^bbb]: wat
 
 ## Code Snippet
 
