@@ -77,7 +77,6 @@ chevron.renderer._get_key = fake_get_key
 
 footnotecount = 1
 
-
 def convert(path, opts, toc, args):
   #print("convert(" + repr(path) + ")")
   proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)

@@ -35,6 +35,7 @@ from PIL import Image
 
 titlecounter = 0
 headers = []
+figurecount = 1
 
 def stringify(content):
   out = []
@@ -48,6 +49,7 @@ def stringify(content):
 def header(elem, doc):
   global titlecounter
   global checkboxcounter
+  global figurecount
 
   if isinstance(elem, pf.Doc):
     pass
@@ -108,7 +110,28 @@ def header(elem, doc):
       ncontent = '\n'.join(nlines)
       output = output[:start_pos] + ncontent + output[end_pos:]
     return pf.RawBlock(output, format='html')
-  elif isinstance(elem, pf.elements.Image):
+  elif isinstance(elem, pf.Figure):
+    imgattrs = elem.content[0].content[0].attributes
+    if "figstyle" in imgattrs:
+      elem.attributes["style"] = imgattrs["figstyle"]
+      del imgattrs["figstyle"]
+    if "figclass" in imgattrs:
+      elem.attributes["class"] = imgattrs["figclass"]
+      del imgattrs["figclass"]
+    #print(elem.caption)
+    #print(repr(elem.caption.content[0]))
+    #print(repr(elem.caption.content[0].content[0].text))
+    #elem.caption.content[0].content[0].text = f"Figure {figurecount}: {elem.caption.content[0].content[0].text}"
+    pass
+  elif isinstance(elem, pf.Image):
+    #print(repr(elem))
+    #print(elem.title)
+    #print(elem.content)
+    #if len(elem.content) > 0:
+    #  elem.content[0].text = f"Figure {figurecount}: {elem.content[0].text}"
+    #  figurecount += 1
+    #  print(elem.content[0])
+    return elem
     if elem.url.startswith("file://") or elem.url.startswith("./"):
       url = None
       if elem.url.startswith("file://"):

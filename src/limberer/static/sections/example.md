@@ -72,3 +72,46 @@ test
   </tbody>
 </table>
 
+# Image Test
+
+![](./images/test1.jpg){style="width: 30%; margin: auto; display: block;"}
+
+Hello world. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+![test](./images/test1.jpg){style="width: 30%;"}
+
+Test foo bar.
+
+<div class="two-col-fig">
+![test](./images/test1.jpg)
+<div style="width: 40%">
+## Test
+
+Hello world. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+</div>
+</div>
+
+<div class="two-col-fig">
+<div style="width: 60%">
+## Test2
+
+Hello world. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+</div>
+![test](./images/test1.jpg){style="width: 1.5in;" figstyle="color: red; width: 35%;" figclass="testing aaa"}
+</div>
+

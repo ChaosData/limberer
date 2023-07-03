@@ -64,7 +64,7 @@ li a.title::after {
 .columns section {
   columns: 2;
   column-gap: 1cm;
-  padding-top: 1cm;
+  padding-top: 0;
 }
 .columns section p {
   text-align: justify;
