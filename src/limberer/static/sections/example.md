@@ -12,11 +12,13 @@ Hi there.
 
 * some[^aaa]
 * bullets[^bbb]
-* <a href="#example">#Example</a>
-* <a href="#wat" class="title"></a>
+* <a href="#example">#Example</a>[^ccc]
+* <a href="#wat" class="title"></a>[^ddd]
 
 [^aaa]: <https://example.com>
 [^bbb]: wat
+[^ccc]: wat2<br>foo
+[^ddd]: wat3
 
 ## Code Snippet
 
@@ -45,22 +47,27 @@ let j = await fetch("https://wat.wat", {
       <td>
 * table bullet
       </td>
-      <td>
+<td>
 ```
 test
 ```
 </td>
-      <td>this is actually in the cell to the right, but pandoc seems to think the prior one is part of a code block. if you want more insanity, put a code block in the same cell as the bullet</td>
+      <td>if we place the above `<td>`/`</td>` for the previous cell _with indentation_, pandoc breaks down</td>
     </tr>
     <tr>
       <td>Test</td><td>Hello; world!</td><td></td><td></td>
     </tr>
     <tr>
-      <td><ol><li>Table list</li><li>foo</li></ol></td>
-      <td></td><td></td><td></td>
+      <td><ol><li>Table list</li><li>foo</li></ol></td><td></td><td></td><td></td>
     </tr>
     <tr>
-      <td></td><td></td><td></td><td></td>
+      <td><ol><li>Table list</li><li>foo</li></ol></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+      <td><ol><li>Table list</li><li>foo</li></ol></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+      <td><ol><li>Table list</li><li>foo</li></ol></td><td></td><td></td><td></td>
     </tr>
   </tbody>
 </table>

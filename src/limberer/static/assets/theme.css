@@ -190,6 +190,18 @@ td {
   width: 100%;
 }
 
+article {
+  display: flex;
+  flex-direction: column;
+  height: 8.5in;
+  width: 6.5in;
+}
+
+article>div.article-body {
+  width: 6.5in;
+  flex: 1 1 auto;
+}
+
 article ul {
   list-style: none;
   padding-left: 0;
@@ -217,14 +229,18 @@ article ul li::before {
 }
 
 .footnotes {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
+  width: 6.5in;
+  flex: 0 1in auto;
+  min-height: 4rem;
+}
+
+.footnotes hr {
+  border: 1px solid black;
 }
 
 .footnotes ol {
-  padding-left: 0;
-  margin-left: 0;
+  padding-left: 0rem;
+  margin-left: 1.5rem;
 }
 
 .footnotes ol li {
@@ -235,3 +251,11 @@ article ul li::before {
   line-height: 1;
 }
 
+.footnote-ref {
+  text-decoration: none;
+  color: inherit;
+}
+.footnote-back {
+  text-decoration: none;
+  color: inherit;
+}

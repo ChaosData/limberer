@@ -148,6 +148,10 @@ def parse_args():
   build = subparsers.add_parser('build')
   parser.add_argument('-d', '--debug', action='store_true',
                       help='Debug output.')
+  build.add_argument('-E', '--emit-html', metavar='<path>', type=str,
+                     default="",
+                     help='Emit post-processed HTML to <path>.')
+
   build.add_argument('config', metavar='<config>', type=str,
                       help="Path to document toml configuration file.")
   args = parser.parse_args()
@@ -233,7 +237,6 @@ def build(args):
         _fns.ol['start'] = str(footnotecount)
         _fns.ol['style'] = f"counter-reset:list-item {footnotecount}; counter-increment:list-item -1;"
         __fns = [c for c in _fns.ol.children if c != "\n"]
-        footnotecount += len(__fns)
         del _fns['id']
         for __fn in __fns:
           id = __fn['id']
@@ -245,9 +248,11 @@ def build(args):
         for _a in soup.find_all(class_="footnote-ref"):
           _a['id'] = section_name + "-" + _a['id']
           _a['href'] = '#' + section_name + "-" + _a['href'][1:]
-          print(_a)
+          _a.sup.string = str(footnotecount - 1 + int(_a.sup.string))
         for _a in _fns.find_all(class_="footnote-back"):
           _a['href'] = '#' + section_name + "-" + _a['href'][1:]
+        _fns.name = 'div'
+        footnotecount += len(__fns)
 
         footnotes = str(_fns)
         html = str(soup)
@@ -286,6 +291,11 @@ def build(args):
 
   if args.debug:
     print(report_html)
+  if args.emit_html != "":
+    with open(args.emit_html, 'w') as fd:
+      fd.write(report_html)
+      fd.flush()
+      fd.close()
 
   h = weasyprint.HTML(string=report_html, base_url='./', url_fetcher=fetcher)
   h.write_pdf("./" + '.pdf'.join(fname.rsplit('.toml', 1)))
