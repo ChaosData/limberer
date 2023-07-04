@@ -138,7 +138,7 @@ convention, or with HTML tables.
 | Content Cell  | Content Cell  |
 ```
 
-```HTML
+````HTML
 <table>
   <thead>
     <tr>
@@ -166,7 +166,7 @@ code block
     <tr><td></td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
-```
+````
 
 #### Images
 
