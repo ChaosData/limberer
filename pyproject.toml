@@ -1,6 +1,6 @@
 [project]
 name = "limberer"
-version = "0.2.6"
+version = "0.3"
 authors = [
   { name = "Jeff Dileo", email = "jtdileo@gmail.com" },
 ]
@@ -21,7 +21,6 @@ dependencies = [
   "chevron",
   "weasyprint",
   "toml",
-  "markdown",
   "pillow",
   "beautifulsoup4",
 ]

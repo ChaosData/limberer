@@ -33,7 +33,7 @@ import toml
 from collections.abc import Callable
 import chevron
 import weasyprint
-import markdown # temporary
+#import markdown # temporary
 import subprocess
 import io
 from bs4 import BeautifulSoup
@@ -75,6 +75,13 @@ chevron.renderer._get_key = fake_get_key
 # >>> chevron.render('Hello, {{#mustache}}{{#upper}}{{.}}{{/upper}}{{/mustache}}!', {'mustache': 'world'})
 # 'Hello, no soup for you!!'
 
+def open_subpath(path, mode='r'):
+  cwd = os.path.abspath(".")
+  target = os.path.abspath(path)
+  if not target.startswith(cwd + os.sep):
+    print(f"error: invalid path {repr(path)} references outside of project directory.")
+    sys.exit(1)
+  return open(path, mode)
 
 footnotecount = 1
 isheader = re.compile('h[1-9]')
@@ -99,7 +106,9 @@ def convert(path, opts, toc, args):
 
   headers = []
   _headers = []
-  r = entrypoint(iw, ow, _headers)
+  _meta = []
+  r = entrypoint(iw, ow, _headers, _meta)
+  opts.update(_meta[0][0])
   ow.seek(0)
   o2 = ow.read()
 
@@ -217,19 +226,22 @@ def build(args):
   sections = []
   toc = []
 
-  for section in config['sections']:
+  for i in range(len(config['sections'])):
+    section = config['sections'][i]
     if section['type'] == 'section':
       # markdown
       section_name = section['name']
       section_path = 'sections/{}.md'.format(section['name'])
-      content = open(section_path, 'rb').read()
+      content = open_subpath(section_path, 'rb').read()
       #print(repr(content))
-      content = content.decode('utf-8')
-      md = markdown.Markdown(extensions=["meta"])
-      html = md.convert(content)
-      opts = md.Meta | section
+      #content = content.decode('utf-8')
+      #md = markdown.Markdown(extensions=["meta"])
+      #html = md.convert(content)
+      #opts = md.Meta | section
+      opts = {} | section
       opts['section_name'] = section_name
       html = convert(section_path, opts, toc, args)
+      #print("opts: " + repr(opts))
       footnotes = ""
       soup = BeautifulSoup(html, 'html.parser')
       _sns = soup.find_all(lambda e: e.name == 'section' and e.attrs.get('id')!=None)
@@ -239,6 +251,8 @@ def build(args):
           if re.match(isheader, _snc[0].name):
             _snc[0]['id'] = _sn['id']
             del _sn['id']
+      #_iders = soup.find_all(lambda e: e.attrs.get('id')!=None)
+      #for _ider in _iders:
 
       _fns = soup.find(id="footnotes")
       if _fns is not None:
@@ -249,17 +263,21 @@ def build(args):
         del _fns['id']
         for __fn in __fns:
           id = __fn['id']
-          nid = section_name + "-" + id
+          #nid = f"{i}-{section_name}-{id}"
+          nid = f"{section_name}-{id}"
           __fn['id'] = nid
           __fnx = soup.find(id=id)
           if __fnx is not None:
             __fnx['id'] = nid
         for _a in soup.find_all(class_="footnote-ref"):
-          _a['id'] = section_name + "-" + _a['id']
-          _a['href'] = '#' + section_name + "-" + _a['href'][1:]
+          #_a['id'] = f"{i}-{section_name}-{_a['id']}"
+          _a['id'] = f"{section_name}-{_a['id']}"
+          #_a['href'] = f"#{i}-{section_name}-{_a['href'][1:]}"
+          _a['href'] = f"#{section_name}-{_a['href'][1:]}"
           _a.sup.string = str(footnotecount - 1 + int(_a.sup.string))
         for _a in _fns.find_all(class_="footnote-back"):
-          _a['href'] = '#' + section_name + "-" + _a['href'][1:]
+          #_a['href'] = f"#{i}-{section_name}-{_a['href'][1:]}"
+          _a['href'] = f"#{section_name}-{_a['href'][1:]}"
         _fns.name = 'div'
         footnotecount += len(__fns)
 
@@ -271,7 +289,7 @@ def build(args):
       opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
       template = section_template
       if "alt" in section:
-        template = open('templates/{}.html'.format(section['alt']), 'r').read()
+        template = open_subpath('templates/{}.html'.format(section['alt']), 'r').read()
       r = chevron.render(template, opts)
       sections.append(r)
     elif section['type'] == 'toc':
@@ -279,7 +297,7 @@ def build(args):
       sections.append(section)
     else:
       # assume in templates/
-      template = open('templates/{}.html'.format(section['type']), 'r').read()
+      template = open_subpath('templates/{}.html'.format(section['type']), 'r').read()
       r = chevron.render(template, config)
       sections.append(r)
       if section['type'] != 'cover' and "title" in section:

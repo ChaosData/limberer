@@ -116,6 +116,6 @@ consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 </div>
-![test](./images/test1.jpg){style="width: 1.5in;" figstyle="color: red; width: 35%;" figclass="testing aaa"}
+![test](./images/test1.jpg){style="width: 1.5in; border: 1px solid red;" figstyle="color: red; width: 35%;" figclass="testing aaa"}
 </div>
 

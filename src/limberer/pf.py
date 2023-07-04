@@ -35,6 +35,7 @@ from PIL import Image
 
 titlecounter = 0
 headers = []
+metadata = []
 figurecount = 1
 
 def stringify(content):
@@ -52,7 +53,8 @@ def header(elem, doc):
   global figurecount
 
   if isinstance(elem, pf.Doc):
-    pass
+    m = {k: elem.get_metadata(k) for k in elem.metadata.content}
+    metadata.append(m)
   elif isinstance(elem, pf.Header):
     #with open("/tmp/log.txt", "a") as fd:
     #  fd.write(repr(elem) + "\n")
@@ -167,14 +169,18 @@ def header(elem, doc):
         sys.stderr.write(os.path.join(os.path.realpath('.'), f) + "\n")
   return elem
 
-def entrypoint(_in=None, _out=None, _headers=None):
+def entrypoint(_in=None, _out=None, _headers=None, _meta=None):
   global headers
+  global metadata
   headers = []
   if _in is None:
     pf.run_filter(header)
   else:
     if _headers != None:
       _headers.append(headers)
+    if _meta != None:
+      metadata = []
+      _meta.append(metadata)
     return pf.run_filter(header, input_stream=_in, output_stream=_out)
 
 if __name__ == "__main__":
