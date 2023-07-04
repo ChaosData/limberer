@@ -59,7 +59,9 @@ def header(elem, doc):
     #with open("/tmp/log.txt", "a") as fd:
     #  fd.write(repr(elem) + "\n")
     headers.append(elem)
-    elem.identifier = elem.identifier + str(len(headers))
+    #elem.identifier = elem.identifier + str(len(headers) + headercount + 1)
+    if elem.identifier == None or elem.identifier == "":
+      elem.identifier = str(len(headers) + headercount + 1)
   #elif isinstance(elem, pf.Note):
   #  print("footnote: " + repr(elem))
   #  pass
@@ -169,9 +171,10 @@ def header(elem, doc):
         sys.stderr.write(os.path.join(os.path.realpath('.'), f) + "\n")
   return elem
 
-def entrypoint(_in=None, _out=None, _headers=None, _meta=None):
+def entrypoint(_in=None, _out=None, _headercount=0, _headers=None, _meta=None):
   global headers
   global metadata
+  global headercount
   headers = []
   if _in is None:
     pf.run_filter(header)
@@ -181,6 +184,7 @@ def entrypoint(_in=None, _out=None, _headers=None, _meta=None):
     if _meta != None:
       metadata = []
       _meta.append(metadata)
+    headercount = _headercount
     return pf.run_filter(header, input_stream=_in, output_stream=_out)
 
 if __name__ == "__main__":

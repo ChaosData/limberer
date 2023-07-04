@@ -4,6 +4,8 @@ toc_header_level: 2
 
 # Examplely Example
 
+# Examplely Example
+
 <h2 id="wat">Hello World - not picked up by the ToC due to inline html</h2>
 
 ### Not in the ToC due to H3
@@ -13,7 +15,16 @@ Hi there.
 * some[^aaa]
 * bullets[^bbb]
 * <a href="#example">#Example</a>[^ccc]
-* <a href="#wat" class="title"></a>[^ddd]
+* <a class="xrefpg" href="#example">#Example</a>
+* <a href="#example-wat" class="title"></a>[^ddd]
+* <a class="xref" href="#example2-aaah2">xref to Example2.AAA</a>
+* [xref to Example2.AAA](#example2-aaah2){.xref}
+* <a class="xrefn" href="#example2-aaah2"></a>
+* [](#example2-aaah2){.xrefn}
+* <a class="xrefpg" href="#example2-aaah2">xref to Example2.AAA</a>
+* [xref to Example2.AAA](#example2-aaah2){.xrefpg}
+* <a class="xrefn xrefpg" href="#example2-aaah2"></a>
+* [](#example2-aaah2){.xrefn .xrefpg}
 
 [^aaa]: <https://example.com>
 [^bbb]: wat
@@ -71,6 +82,11 @@ test
     </tr>
   </tbody>
 </table>
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
 
 # Image Test
 

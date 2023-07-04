@@ -224,17 +224,40 @@ div.tocpagenr::after {
   content: target-counter(attr(href), page);
 }
 
-li a.title {
+a.title {
   color: inherit;
   text-decoration-line: inherit;
 }
-li a.title::before {
+a.title::before {
+  color: inherit;
   content: target-text(attr(href));
 }
-li a.title::after {
-  color: black;
+a.title::after {
+  color: inherit;
   content: target-counter(attr(href), page);
   float: right;
+}
+
+a.xref {
+  color: inherit;
+  text-decoration-line: inherit;
+}
+a.xrefn {
+  color: inherit;
+  text-decoration-line: inherit;
+}
+a.xrefn::before {
+  color: inherit;
+  content: target-text(attr(href));
+}
+
+a.xrefpg {
+  color: inherit;
+  text-decoration-line: inherit;
+}
+a.xrefpg::after {
+  color: inherit;
+  content: " on page " target-counter(attr(href), page);
 }
 
 article {

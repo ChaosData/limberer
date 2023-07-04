@@ -85,8 +85,10 @@ def open_subpath(path, mode='r'):
 
 footnotecount = 1
 isheader = re.compile('h[1-9]')
+headercount = 0
 
 def convert(path, opts, toc, args):
+  global headercount
   #print("convert(" + repr(path) + ")")
   proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
   if proc1.returncode != 0:
@@ -107,13 +109,14 @@ def convert(path, opts, toc, args):
   headers = []
   _headers = []
   _meta = []
-  r = entrypoint(iw, ow, _headers, _meta)
+  r = entrypoint(iw, ow, headercount, _headers, _meta)
   opts.update(_meta[0][0])
   ow.seek(0)
   o2 = ow.read()
 
   if len(_headers) == 1:
     headers = _headers[0]
+    headercount += len(headers)
 
   if "columns" in opts:
     toc.append(opts | {"name": opts['section_name'] + "-columns-title", "issubsection": False})
@@ -251,38 +254,39 @@ def build(args):
           if re.match(isheader, _snc[0].name):
             _snc[0]['id'] = _sn['id']
             del _sn['id']
-      #_iders = soup.find_all(lambda e: e.attrs.get('id')!=None)
-      #for _ider in _iders:
+      _iders = soup.find_all(lambda e: e.name != 'article' and e.attrs.get('id')!=None)
+      for _ider in _iders:
+        _ider['id'] = f"{section_name}-{_ider['id']}"
 
-      _fns = soup.find(id="footnotes")
+      _fns = soup.find(class_="footnotes")
       if _fns is not None:
         _fns = _fns.extract()
         _fns.ol['start'] = str(footnotecount)
         _fns.ol['style'] = f"counter-reset:list-item {footnotecount}; counter-increment:list-item -1;"
         __fns = [c for c in _fns.ol.children if c != "\n"]
         del _fns['id']
-        for __fn in __fns:
-          id = __fn['id']
-          #nid = f"{i}-{section_name}-{id}"
-          nid = f"{section_name}-{id}"
-          __fn['id'] = nid
-          __fnx = soup.find(id=id)
-          if __fnx is not None:
-            __fnx['id'] = nid
+        # we already converted all of them above
+        #for __fn in __fns:
+        #  id = __fn['id']
+        #  print("__fn['id']: " + repr(id))
+        #  nid = f"{section_name}-{id}"
+        #  __fn['id'] = nid
+        #  __fnx = soup.find(id=id)
+        #  print("__fnx: " + repr(__fnx))
+        #  if __fnx is not None:
+        #    __fnx['id'] = nid
         for _a in soup.find_all(class_="footnote-ref"):
-          #_a['id'] = f"{i}-{section_name}-{_a['id']}"
-          _a['id'] = f"{section_name}-{_a['id']}"
-          #_a['href'] = f"#{i}-{section_name}-{_a['href'][1:]}"
+          # we already converted all of them above
+          #_a['id'] = f"{section_name}-{_a['id']}"
           _a['href'] = f"#{section_name}-{_a['href'][1:]}"
           _a.sup.string = str(footnotecount - 1 + int(_a.sup.string))
         for _a in _fns.find_all(class_="footnote-back"):
-          #_a['href'] = f"#{i}-{section_name}-{_a['href'][1:]}"
           _a['href'] = f"#{section_name}-{_a['href'][1:]}"
         _fns.name = 'div'
         footnotecount += len(__fns)
 
         footnotes = str(_fns)
-        html = str(soup)
+      html = str(soup)
 
       opts['html'] = html
       opts['footnotes'] = footnotes

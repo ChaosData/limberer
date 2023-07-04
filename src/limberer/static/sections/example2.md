@@ -1,8 +1,10 @@
 ---
 columns: true
+foo: bar
+classes: aaa bbb ccc
 ---
 
-## AAA
+## AAA{#aaah2}
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat faucibus vestibulum.
 Mauris varius orci quam. Nam dui mauris, dictum at elementum at, mollis pulvinar est.
