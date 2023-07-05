@@ -126,7 +126,7 @@ def convert(path, opts, toc, args):
 
   for h in headers:
     if h.level <= header_level:
-      toc.append(opts | {"name": h.identifier, "issubsection": h.level != 1})
+      toc.append(opts | {"name": opts['section_name'] + "-" + h.identifier, "issubsection": h.level != 1})
 
   # pass back to pandoc
   proc2 = subprocess.run(['pandoc', '-f', 'json',
