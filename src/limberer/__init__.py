@@ -140,8 +140,10 @@ def convert(path, opts, toc, args):
     if appendix:
       ax['appendix_n'] = appendixify(appendix_count)
       appendix_count += 1
-    toc.append(opts | {"name": opts['section_name'] + "-columns-title", "issubsection": False} | ax)
-
+    if "title" in opts and opts['title'] != "":
+      toc.append(opts | {"name": opts['section_name'] + "-columns-title", "issubsection": False} | ax)
+    else:
+      opts["title"] = ""
   header_level = int(opts.get('toc_header_level', ['1'])[0])
 
   ah = False

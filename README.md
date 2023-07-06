@@ -97,8 +97,8 @@ authors = [
 sections = [
   { type = "cover" },
   { type = "toc" },
-  { name = "example", type = "section", title = "Example" },
-  { name = "example2", type = "section", title = "Example2", sectionoption = "value" },
+  { name = "example", type = "section" },
+  { name = "example2", type = "section", sectionoption = "value" },
   ...
 ]
 ```
