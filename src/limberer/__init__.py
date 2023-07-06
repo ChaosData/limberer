@@ -86,9 +86,26 @@ def open_subpath(path, mode='r'):
 footnotecount = 1
 isheader = re.compile('h[1-9]')
 headercount = 0
+appendix = False
+appendix_count = 0
+
+alph = "AABCDEFGHIJKLMNOPQRSTUVWXYZ"
+def appendixify(n):
+  if n == 0:
+    return "A"
+  d = []
+  while n:
+    d.append((n % 26))
+    n //= 26
+  r = []
+  for _d in d[::-1]:
+    r.append(alph[_d])
+  r[-1] = chr(65+d[0])
+  return ''.join(r)
 
 def convert(path, opts, toc, args):
   global headercount
+  global appendix_count
   #print("convert(" + repr(path) + ")")
   proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
   if proc1.returncode != 0:
@@ -119,14 +136,22 @@ def convert(path, opts, toc, args):
     headercount += len(headers)
 
   if "columns" in opts:
-    toc.append(opts | {"name": opts['section_name'] + "-columns-title", "issubsection": False})
+    ax = {}
+    if appendix:
+      ax['appendix_n'] = appendixify(appendix_count)
+      appendix_count += 1
+    toc.append(opts | {"name": opts['section_name'] + "-columns-title", "issubsection": False} | ax)
 
-  #print(repr(headers))
   header_level = int(opts.get('toc_header_level', ['1'])[0])
 
+  ah = False
   for h in headers:
+    ax = {}
+    if appendix and not ah and h.level == 1:
+      ax['appendix_n'] = appendixify(appendix_count)
+      ah = True
     if h.level <= header_level:
-      toc.append(opts | {"name": opts['section_name'] + "-" + h.identifier, "issubsection": h.level != 1})
+      toc.append(opts | {"name": opts['section_name'] + "-" + h.identifier, "issubsection": h.level != 1} | ax)
 
   # pass back to pandoc
   proc2 = subprocess.run(['pandoc', '-f', 'json',
@@ -203,6 +228,8 @@ def main():
 
 def build(args):
   global footnotecount
+  global appendix
+  global appendix_count
 
   config = args.config
   if not os.path.exists(config):
@@ -232,19 +259,16 @@ def build(args):
   for i in range(len(config['sections'])):
     section = config['sections'][i]
     if section['type'] == 'section':
-      # markdown
       section_name = section['name']
       section_path = 'sections/{}.md'.format(section['name'])
       content = open_subpath(section_path, 'rb').read()
-      #print(repr(content))
-      #content = content.decode('utf-8')
-      #md = markdown.Markdown(extensions=["meta"])
-      #html = md.convert(content)
-      #opts = md.Meta | section
       opts = {} | section
       opts['section_name'] = section_name
+      if appendix:
+        opts['appendix'] = True
       html = convert(section_path, opts, toc, args)
-      #print("opts: " + repr(opts))
+      if appendix:
+        appendix_count += 1
       footnotes = ""
       soup = BeautifulSoup(html, 'html.parser')
       _sns = soup.find_all(lambda e: e.name == 'section' and e.attrs.get('id')!=None)
@@ -299,13 +323,24 @@ def build(args):
     elif section['type'] == 'toc':
       # defer until after we get through everything else
       sections.append(section)
+    elif section['type'] == 'appendix_start':
+      appendix = True
+    elif section['type'] == 'appendix_end':
+      appendix = False
+    #elif section['type'] == 'appendix_reset':
+    #  appendix_count = 0
     else:
       # assume in templates/
       template = open_subpath('templates/{}.html'.format(section['type']), 'r').read()
       r = chevron.render(template, config)
       sections.append(r)
       if section['type'] != 'cover' and "title" in section:
-        toc.append(opts | {"name": section['type'], "issubsection": False})
+        name = section['type']
+        ax = {}
+        if appendix:
+          ax['appendix_n'] = appendixify(appendix_count)
+          appendix_count += 1
+        toc.append(opts | {"name": name, "issubsection": False} | ax)
 
   for section in sections:
     if type(section) == str:

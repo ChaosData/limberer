@@ -103,10 +103,25 @@ sections = [
 ]
 ```
 
-### Sections
+### Section Templates
 
-Sections are a mix of Markdown (and, in some cases, HTML), where most document
-content is written. A section can begin with a block of Markdown metadata:
+Out of the box, `limberer` comes with some initial section templates:
+
+* `cover`: A title page section.
+* `toc`: A table of contents section.
+* `section`: The underlying template for custom sections.
+
+Additionally, `limberer` supports the following template-like pseudo-sections:
+
+* `appendix_start`: Subsequent sections will be treated as appendices.
+* `appendix_end`: Disables the above setting; subsequent sections are not
+  treated as appendices. The appendix counter will not be cleared.
+
+### Custom Sections
+
+Custom sections ("sections") are a mix of Markdown (and, in some cases, HTML),
+where most document content is written. A section can begin with a block of
+Markdown metadata:
 
 ```markdown
 ---

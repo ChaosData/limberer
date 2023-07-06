@@ -65,6 +65,7 @@ html {
   font-size: 10pt;
   font-weight: 300;
   line-height: 1.0;
+  counter-reset: appendix;
 }
 
 strong {
@@ -369,5 +370,7 @@ div .two-col-fig>figure {
   color: inherit;
 }
 
-
-
+article.appendix>.article-body>h1:nth-of-type(1):before {
+  content: "Appendix " counter(appendix, upper-alpha) ": ";
+  counter-increment: appendix;
+}
