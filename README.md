@@ -355,7 +355,6 @@ document, the `assets/style.css` to cover group theming for consistency, and
 ## Todo List
 
 * Support for custom Mustache-generated CSS
-* Redo contiguous sections
 * Better footnotes
 * Draft builds
 * Partial builds of individual sections
