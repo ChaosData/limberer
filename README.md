@@ -150,7 +150,7 @@ supported options are the following:
 * `title`: Section title for 2-column format.
 * `classes`: List of HTML class names to apply to the section (`<article>`)
 
-Additionally, `"cont" = true` may be passed in a `"type" = "section"` section
+Additionally, `cont = true` may be passed in a `type = "section"` section
 entry within the project TOML to specify that the section's Markdown should be
 directly concatenated instead of being handled as a full section. This is
 occasionally useful for managing large single sections that are not intended to
