@@ -13,5 +13,7 @@ sections = [
   { name = "example", type = "section" },
   { name = "example2", type = "section" },
   { name = "example3", type = "section", cont = true },
+  { name = "configexample", type = "section", conf = "sections/configexample1.toml" },
+  { name = "configexample", type = "section", conf = "sections/configexample2.toml", cont = true },
 ]
 

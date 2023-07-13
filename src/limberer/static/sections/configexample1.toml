@@ -1,0 +1,22 @@
+title = "Config Example"
+pre = """
+Hello
+
+* foo
+* bar
+"""
+post = """
+world.
+"""
+
+[[entries]]
+a = """
+* foo
+* bar"""
+b = "_wat_"
+
+[[entries]]
+a = """
+* foo2
+* bar2"""
+b = "_wat2_"

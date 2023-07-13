@@ -83,6 +83,33 @@ def open_subpath(path, mode='r'):
     sys.exit(1)
   return open(path, mode)
 
+def parse_args():
+  parser = argparse.ArgumentParser(
+    description='A flexible document generator based on WeasyPrint, mustache templates, and Pandoc.'
+  )
+  parser.add_argument('-d', '--debug', action='store_true',
+                      help='Debug output.')
+  subparsers = parser.add_subparsers(dest='command', required=True,
+                                     title='subcommands',
+                                     description='valid subcommands',
+                                     help='additional help')
+
+  create = subparsers.add_parser('create')
+  create.add_argument('project', metavar='<project>', type=str,
+                      help="Name of project to create.")
+  create.add_argument('-t', '--template', metavar='<path>', type=str,
+                      default="",
+                      help='Create from alternative template path instead of the built-in default.')
+  build = subparsers.add_parser('build')
+  build.add_argument('-E', '--emit-html', metavar='<path>', type=str,
+                     default="",
+                     help='Emit post-processed HTML to <path>.')
+  build.add_argument('configs', metavar='<configs...>', nargs='+', type=str,
+                      help="Paths to document toml configuration files.")
+
+  args = parser.parse_args()
+  return args
+
 footnotecount = 1
 isheader = re.compile('h[1-9]')
 headercount = 0
@@ -103,12 +130,9 @@ def appendixify(n):
   r[-1] = chr(65+d[0])
   return ''.join(r)
 
-#def convert(path, opts, toc, args):
 def convert(content, opts, toc, args):
   global headercount
   global appendix_count
-  #print("convert(" + repr(path) + ")")
-  #proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
   proc1 = subprocess.run(['pandoc', '-t', 'json', '-f', 'markdown'],
                          input=content, text=True, capture_output=True)
   if proc1.returncode != 0:
@@ -118,8 +142,8 @@ def convert(content, opts, toc, args):
     sys.exit(1)
   o1 = proc1.stdout
 
-  if args.debug:
-    print(o1)
+  #if args.debug:
+  #  print(o1)
 
   # run the panflute filter
   sys.argv = ["html"]
@@ -172,36 +196,52 @@ def convert(content, opts, toc, args):
   content = proc2.stdout
   return content
 
+def convert_fancy(content, section_name, opts, toc, args):
+  global appendix_count
+  global footnotecount
 
-def parse_args():
-  parser = argparse.ArgumentParser(
-    description='A flexible document generator based on WeasyPrint, mustache templates, and Pandoc.'
-  )
-  subparsers = parser.add_subparsers(dest='command', required=True,
-                                     title='subcommands',
-                                     description='valid subcommands',
-                                     help='additional help')
+  if args.debug:
+    opts['debug_markdown'] = content
 
-  create = subparsers.add_parser('create')
-  create.add_argument('project', metavar='<project>', type=str,
-                      help="Name of project to create.")
-  create.add_argument('-t', '--template', metavar='<path>', type=str,
-                      default="",
-                      help='Create from alternative template path instead of the built-in default.')
-  build = subparsers.add_parser('build')
-  parser.add_argument('-d', '--debug', action='store_true',
-                      help='Debug output.')
-  build.add_argument('-E', '--emit-html', metavar='<path>', type=str,
-                     default="",
-                     help='Emit post-processed HTML to <path>.')
+  html = convert(content, opts, toc, args)
 
-  #build.add_argument('config', metavar='<config>', type=str,
-  #                    help="Path to document toml configuration file.")
-  build.add_argument('configs', metavar='<configs...>', nargs='+', type=str,
-                      help="Paths to document toml configuration files.")
+  if appendix:
+    appendix_count += 1
+  footnotes = ""
+  soup = BeautifulSoup(html, 'html.parser')
+  _sns = soup.find_all(lambda e: e.name == 'section' and e.attrs.get('id')!=None)
+  for _sn in _sns:
+    _snc = [c for c in _sn.children if c != "\n"]
+    if len(_snc) > 0:
+      if re.match(isheader, _snc[0].name):
+        _snc[0]['id'] = _sn['id']
+        del _sn['id']
+  _iders = soup.find_all(lambda e: e.name != 'article' and e.attrs.get('id')!=None)
+  for _ider in _iders:
+    _ider['id'] = f"{section_name}-{_ider['id']}"
 
-  args = parser.parse_args()
-  return args
+  _fns = soup.find(class_="footnotes")
+  if _fns is not None:
+    _fns = _fns.extract()
+    _fns.ol['start'] = str(footnotecount)
+    _fns.ol['style'] = f"counter-reset:list-item {footnotecount}; counter-increment:list-item -1;"
+    __fns = [c for c in _fns.ol.children if c != "\n"]
+    del _fns['id']
+    for _a in soup.find_all(class_="footnote-ref"):
+      _a['href'] = f"#{section_name}-{_a['href'][1:]}"
+      _a.sup.string = str(footnotecount - 1 + int(_a.sup.string))
+    for _a in _fns.find_all(class_="footnote-back"):
+      _a['href'] = f"#{section_name}-{_a['href'][1:]}"
+    _fns.name = 'div'
+    footnotecount += len(__fns)
+
+    footnotes = str(_fns)
+  html = str(soup)
+
+  opts['html'] = html
+  opts['footnotes'] = footnotes
+  opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
+  return html
 
 def main():
   args = parse_args()
@@ -282,7 +322,19 @@ def build(args):
         continue
       section_name = section['name']
       section_path = 'sections/{}.md'.format(section['name'])
+
       raw_content = open_subpath(section_path, 'r').read()
+
+      opts = {} | section
+      opts['config'] = config
+      opts['section_name'] = section_name
+
+      if "conf" in section:
+        opts = opts | toml.loads(open_subpath(section['conf'], 'r').read())
+      if appendix:
+        opts['appendix'] = True
+      content = chevron.render(raw_content, opts)
+
       for j in range(i+1, len(config['sections'])):
         _section = config['sections'][j]
         if _section['type'] != 'section' or _section.get('cont', False) != True:
@@ -290,66 +342,20 @@ def build(args):
         _section_name = _section['name']
         _section_path = 'sections/{}.md'.format(_section['name'])
         _raw_content = open_subpath(_section_path, 'r').read()
-        raw_content += "\n\n"
-        raw_content += _raw_content
 
-      opts = {} | section
-      opts['config'] = config
-      opts['section_name'] = section_name
-      if appendix:
-        opts['appendix'] = True
+        _opts = {} | _section
+        _opts['config'] = config
+        _opts['section_name'] = _section_name
 
-      content = chevron.render(raw_content, opts)
-      html = convert(content, opts, toc, args)
+        if "conf" in _section:
+          _opts = _opts | toml.loads(open_subpath(_section['conf'], 'r').read())
+        _content = chevron.render(_raw_content, _opts)
 
-      if appendix:
-        appendix_count += 1
-      footnotes = ""
-      soup = BeautifulSoup(html, 'html.parser')
-      _sns = soup.find_all(lambda e: e.name == 'section' and e.attrs.get('id')!=None)
-      for _sn in _sns:
-        _snc = [c for c in _sn.children if c != "\n"]
-        if len(_snc) > 0:
-          if re.match(isheader, _snc[0].name):
-            _snc[0]['id'] = _sn['id']
-            del _sn['id']
-      _iders = soup.find_all(lambda e: e.name != 'article' and e.attrs.get('id')!=None)
-      for _ider in _iders:
-        _ider['id'] = f"{section_name}-{_ider['id']}"
+        content += "\n\n"
+        content += _content
 
-      _fns = soup.find(class_="footnotes")
-      if _fns is not None:
-        _fns = _fns.extract()
-        _fns.ol['start'] = str(footnotecount)
-        _fns.ol['style'] = f"counter-reset:list-item {footnotecount}; counter-increment:list-item -1;"
-        __fns = [c for c in _fns.ol.children if c != "\n"]
-        del _fns['id']
-        # we already converted all of them above
-        #for __fn in __fns:
-        #  id = __fn['id']
-        #  print("__fn['id']: " + repr(id))
-        #  nid = f"{section_name}-{id}"
-        #  __fn['id'] = nid
-        #  __fnx = soup.find(id=id)
-        #  print("__fnx: " + repr(__fnx))
-        #  if __fnx is not None:
-        #    __fnx['id'] = nid
-        for _a in soup.find_all(class_="footnote-ref"):
-          # we already converted all of them above
-          #_a['id'] = f"{section_name}-{_a['id']}"
-          _a['href'] = f"#{section_name}-{_a['href'][1:]}"
-          _a.sup.string = str(footnotecount - 1 + int(_a.sup.string))
-        for _a in _fns.find_all(class_="footnote-back"):
-          _a['href'] = f"#{section_name}-{_a['href'][1:]}"
-        _fns.name = 'div'
-        footnotecount += len(__fns)
+      html = convert_fancy(content, section_name, opts, toc, args)
 
-        footnotes = str(_fns)
-      html = str(soup)
-
-      opts['html'] = html
-      opts['footnotes'] = footnotes
-      opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
       template = section_template
       if "alt" in section:
         template = open_subpath('templates/{}.html'.format(section['alt']), 'r').read()
@@ -366,8 +372,23 @@ def build(args):
     #  appendix_count = 0
     else:
       # assume in templates/
-      template = open_subpath('templates/{}.html'.format(section['type']), 'r').read()
-      r = chevron.render(template, config)
+      format = section.get('format', "html")
+      template = open_subpath(f"templates/{section['type']}.{format}", 'r').read()
+      _config = {} | config | section
+      if "conf" in section:
+        _config = _config | toml.loads(open_subpath(section['conf'], 'r').read())
+      if format == 'md':
+        section_name = section['name']
+        opts = _config
+        opts['config'] = _config
+        opts['section_name'] = section_name
+
+        if appendix:
+          opts['appendix'] = True
+        template = chevron.render(template, opts)
+        template = convert_fancy(template, section_name, opts, toc, args)
+
+      r = chevron.render(template, _config)
       sections.append(r)
       if section['type'] != 'cover' and "title" in section:
         name = section['type']
@@ -390,8 +411,6 @@ def build(args):
   config['body'] = body
   report_html = chevron.render(base_template, config)
 
-  if args.debug:
-    print(report_html)
   if args.emit_html != "":
     with open(args.emit_html, 'w') as fd:
       fd.write(report_html)

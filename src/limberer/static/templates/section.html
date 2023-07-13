@@ -1,4 +1,9 @@
     <article id="{{name}}" class="{{#columns}}columns {{/columns}}{{#appendix}}appendix {{/appendix}}{{#classes}}{{.}} {{/classes}}">
+{{#debug_markdown}}
+<!--
+{{& .}}
+-->
+{{/debug_markdown}}
       <div class="article-body">
     {{#columns}}
       <h1 id="{{name}}-columns-title">{{opts.title}}</h1>
