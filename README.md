@@ -150,11 +150,18 @@ supported options are the following:
 * `title`: Section title for 2-column format.
 * `classes`: List of HTML class names to apply to the section (`<article>`)
 
-Additionally, `cont = true` may be passed in a `type = "section"` section
-entry within the project TOML to specify that the section's Markdown should be
-directly concatenated instead of being handled as a full section. This is
-occasionally useful for managing large single sections that are not intended to
-be divided across multiple `<article>` elements within the underlying HTML.
+Additionally, the following options may be passed in a section entry within the
+project TOML:
+
+* `conf = "path/to/config.toml"`: This specifies a path to a TOML file that
+  is loaded for the context of the section. This is useful for loading
+  generated data into a section containing Mustache templating, or for reusing
+  a section that is itself a "config template" combining Mustache and Markdown.
+* `cont = true`: This specifies that the section's Markdown should be directly
+  concatenated instead of being handled as a full section. This is useful for
+  combining "config templates" together, or, more simply, just managing large
+  single sections that are not intended to be divided across multiple
+  `<article>` elements within the underlying HTML.
 
 #### Tables
 
