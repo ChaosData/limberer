@@ -278,9 +278,20 @@ def build(args):
   for i in range(len(config['sections'])):
     section = config['sections'][i]
     if section['type'] == 'section':
+      if section.get('cont', False) == True:
+        continue
       section_name = section['name']
       section_path = 'sections/{}.md'.format(section['name'])
       raw_content = open_subpath(section_path, 'r').read()
+      for j in range(i+1, len(config['sections'])):
+        _section = config['sections'][j]
+        if _section['type'] != 'section' or _section.get('cont', False) != True:
+          break
+        _section_name = _section['name']
+        _section_path = 'sections/{}.md'.format(_section['name'])
+        _raw_content = open_subpath(_section_path, 'r').read()
+        raw_content += "\n\n"
+        raw_content += _raw_content
 
       opts = {} | section
       opts['config'] = config

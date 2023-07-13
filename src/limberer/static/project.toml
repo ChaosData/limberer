@@ -12,5 +12,6 @@ sections = [
   { type = "toc" },
   { name = "example", type = "section" },
   { name = "example2", type = "section" },
+  { name = "example3", type = "section", cont = true },
 ]
 
