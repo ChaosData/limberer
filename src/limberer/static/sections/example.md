@@ -2,7 +2,7 @@
 toc_header_level: 2
 ---
 
-# Examplely Example
+# Examplely Example: {{config.title}}
 
 # Examplely Example
 
@@ -40,6 +40,18 @@ let j = await fetch("https://wat.wat", {
   }
 }).then((res)=>res.json());
 ```
+<center>Example Snippet of Code</center>
+
+<div class="pagebreak"></div>
+
+```js
+let j = await fetch("https://wat.wat", {
+  "headers": {
+    "x-test": "foo"
+  }
+}).then((res)=>res.json());
+```
+<figure><figcaption>Example Snippet of Code</figcaption></figure>
 
 ## Table Test
 

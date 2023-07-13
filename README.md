@@ -81,7 +81,7 @@ default, sections will be rendered against the `template/section.html`
 template, but the template used can be changed via an `alt = "othertemplate"`
 section list setting.
 
-### Project TOML
+### Project TOML Example
 
 ```toml
 title = "Example Document"
@@ -103,6 +103,14 @@ sections = [
 ]
 ```
 
+Additional or overriding settings or Mustache template variables can be
+configured by passing additional TOML file paths into the `limberer build`
+command:
+
+```
+$ limberer build report.toml stats.toml
+```
+
 ### Section Templates
 
 Out of the box, `limberer` comes with some initial section templates:
@@ -120,8 +128,9 @@ Additionally, `limberer` supports the following template-like pseudo-sections:
 ### Custom Sections
 
 Custom sections ("sections") are a mix of Markdown (and, in some cases, HTML),
-where most document content is written. A section can begin with a block of
-Markdown metadata:
+with support for Mustache expressions (using the TOML configuration), where
+most document content is written. A section can begin with a block of Markdown
+metadata:
 
 ```markdown
 ---
@@ -270,6 +279,37 @@ are available in the default style/layout.
   * [](#example2-aaah2){.xrefn .xrefpg}
   ```
 
+#### Code Blocks
+
+
+````markdown
+```js
+let j = await fetch("https://wat.wat", {
+  "headers": {
+    "x-test": "foo"
+  }
+}).then((res)=>res.json());
+```
+<center>Example Snippet of Code</center>
+
+```js
+let j = await fetch("https://wat.wat", {
+  "headers": {
+    "x-test": "foo"
+  }
+}).then((res)=>res.json());
+```
+<figure><figcaption>Example Snippet of Code with a figure prefix</figcaption></figure>
+````
+
+The following settings can be configured in the project TOML:
+
+* `highlight` (defaults to `"molokai"`)
+* `highlight_plaintext` (defaults to `"solarized-dark"`)
+* `highlight_font` (defaults to `"'DejaVu Sans Mono', monospace"`)
+* `highlight_style` (defaults to `"padding: 1rem; border-radius: 2px; overflow-x: auto;"`
+* `highlight_line_length` (defaults to `"74"`)
+
 #### Breaks
 
 The following can be added to force a break.
@@ -308,6 +348,9 @@ document, the `assets/style.css` to cover group theming for consistency, and
 
 ## Todo List
 
+* Support for custom Mustache-generated CSS
+* Redo contiguous sections
+* Better footnotes
 * Draft builds
 * Partial builds of individual sections
 * Support for non-Markdown sections

@@ -103,17 +103,20 @@ def appendixify(n):
   r[-1] = chr(65+d[0])
   return ''.join(r)
 
-def convert(path, opts, toc, args):
+#def convert(path, opts, toc, args):
+def convert(content, opts, toc, args):
   global headercount
   global appendix_count
   #print("convert(" + repr(path) + ")")
-  proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
+  #proc1 = subprocess.run(['pandoc', '-t', 'json', path], capture_output=True)
+  proc1 = subprocess.run(['pandoc', '-t', 'json', '-f', 'markdown'],
+                         input=content, text=True, capture_output=True)
   if proc1.returncode != 0:
     sys.stderr.write("error running initial pandoc command: \n")
     sys.stderr.buffer.write(proc1.stderr)
     sys.stderr.write("\n")
     sys.exit(1)
-  o1 = proc1.stdout.decode('utf-8')
+  o1 = proc1.stdout
 
   if args.debug:
     print(o1)
@@ -126,7 +129,7 @@ def convert(path, opts, toc, args):
   headers = []
   _headers = []
   _meta = []
-  r = entrypoint(iw, ow, headercount, _headers, _meta)
+  r = entrypoint(iw, ow, headercount, _headers, _meta, opts['config'])
   opts.update(_meta[0][0])
   ow.seek(0)
   o2 = ow.read()
@@ -192,8 +195,11 @@ def parse_args():
                      default="",
                      help='Emit post-processed HTML to <path>.')
 
-  build.add_argument('config', metavar='<config>', type=str,
-                      help="Path to document toml configuration file.")
+  #build.add_argument('config', metavar='<config>', type=str,
+  #                    help="Path to document toml configuration file.")
+  build.add_argument('configs', metavar='<configs...>', nargs='+', type=str,
+                      help="Paths to document toml configuration files.")
+
   args = parser.parse_args()
   return args
 
@@ -233,7 +239,7 @@ def build(args):
   global appendix
   global appendix_count
 
-  config = args.config
+  config = args.configs[0]
   if not os.path.exists(config):
     sys.stderr.write(f"error: '{config}' not found.\n")
     sys.exit(1)
@@ -246,7 +252,18 @@ def build(args):
   if dir != "":
     os.chdir(dir)
 
-  config = toml.loads(open(fname, 'r').read())
+  config = {
+    "highlight": "molokai",
+    "highlight_plaintext": "solarized-dark",
+    "highlight_font": "'DejaVu Sans Mono', monospace",
+    "highlight_style": "padding: 1rem; border-radius: 2px; overflow-x: auto;",
+    "highlight_line_length": "74",
+  }
+
+  config = config | toml.loads(open(fname, 'r').read())
+  for path in args.configs[1:]:
+    config = config | toml.loads(open(path, 'r').read())
+
   config['config'] = config # we occasionally need top.down.variable.paths to resolve abiguity
 
   base_template = open('templates/base.html', 'r').read()
@@ -263,12 +280,17 @@ def build(args):
     if section['type'] == 'section':
       section_name = section['name']
       section_path = 'sections/{}.md'.format(section['name'])
-      content = open_subpath(section_path, 'rb').read()
+      raw_content = open_subpath(section_path, 'r').read()
+
       opts = {} | section
+      opts['config'] = config
       opts['section_name'] = section_name
       if appendix:
         opts['appendix'] = True
-      html = convert(section_path, opts, toc, args)
+
+      content = chevron.render(raw_content, opts)
+      html = convert(content, opts, toc, args)
+
       if appendix:
         appendix_count += 1
       footnotes = ""

@@ -37,6 +37,7 @@ titlecounter = 0
 headers = []
 metadata = []
 figurecount = 1
+args = None
 
 def stringify(content):
   out = []
@@ -85,11 +86,13 @@ def header(elem, doc):
           lang = 'sh'
 
     argv = ['highlight']
-    argv += ['-s', 'solarized-dark' if lang == 'txt' or lang == 'console' else 'molokai']
+    argv += ['-s', config['highlight_plaintext'] if lang == 'txt' or lang == 'console' else config['highlight']]
     argv += ['-O' , 'html']
     argv += ['--inline-css']
     argv += ['-S' , lang]
-    argv += ['--font' , "'DejaVu Sans Mono', monospace; padding: 1rem; border-radius: 2px; overflow-x: auto"]
+    argv += ['--font' , f"{config['highlight_font']}; {config['highlight_style']}"]
+    argv += ['-V', '-J' , config['highlight_line_length']]
+    #argv += ['-l', '-j', "3"] # probably best to do line numbers in css
     argv += ['-f' , '--enclose-pre']
 
     #print(argv)
@@ -171,10 +174,11 @@ def header(elem, doc):
         sys.stderr.write(os.path.join(os.path.realpath('.'), f) + "\n")
   return elem
 
-def entrypoint(_in=None, _out=None, _headercount=0, _headers=None, _meta=None):
+def entrypoint(_in=None, _out=None, _headercount=0, _headers=None, _meta=None, _config=None):
   global headers
   global metadata
   global headercount
+  global config
   headers = []
   if _in is None:
     pf.run_filter(header)
@@ -184,6 +188,8 @@ def entrypoint(_in=None, _out=None, _headercount=0, _headers=None, _meta=None):
     if _meta != None:
       metadata = []
       _meta.append(metadata)
+    if _config != None:
+      config = _config
     headercount = _headercount
     return pf.run_filter(header, input_stream=_in, output_stream=_out)
 
