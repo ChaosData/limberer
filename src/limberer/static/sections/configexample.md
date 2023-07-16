@@ -22,6 +22,5 @@
 {{/entries}}
 </tbody>
 </table>
-<br>
 
 {{& post}}
