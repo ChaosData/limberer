@@ -29,7 +29,7 @@ import argparse
 import os
 import os.path
 import shutil
-import toml
+import rtoml as toml
 from collections.abc import Callable
 import chevron
 import weasyprint
@@ -293,10 +293,12 @@ def build(args):
     os.chdir(dir)
 
   config = {
-    "highlight": "molokai",
+    "highlight": "monokai",
     "highlight_plaintext": "solarized-dark",
     "highlight_font": "'DejaVu Sans Mono', monospace",
-    "highlight_style": "padding: 1rem; border-radius: 2px; overflow-x: auto;",
+    "highlight_style": "border-radius: 2px; overflow-x: auto;",
+    "highlight_padding": "padding: 0.5rem 1rem 0.5rem 1rem;",
+    "highlight_padding_lines": "padding: 0.25rem 0.5rem 0.25rem 0.5rem;",
     "highlight_line_length": "74",
   }
 

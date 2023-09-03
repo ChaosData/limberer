@@ -13,24 +13,32 @@ html {
   font-family: Comic Sans MS;
 }
 
-table, th, td {
+table:not(.highlighttable) {
   border: 1px solid #c0c0c0;
 }
 
-th {
+table:not(.highlighttable) th {
+  border: 1px solid #c0c0c0;
+}
+
+table:not(.highlighttable) td {
+  border: 1px solid #c0c0c0;
+}
+
+table:not(.highlighttable) th {
   color: white;
   background-color: black;
   font-weight: bold;
 }
 
-tr:nth-child(even) {
+table:not(.highlighttable) tr:nth-child(even) {
     background-color: #E7E9EB;
 }
-tr:nth-child(odd) {
+table:not(.highlighttable) tr:nth-child(odd) {
     background-color: #ffffff;
 }
 
-td {
+table:not(.highlighttable) td {
   min-height: 20px;
 }
 
@@ -45,4 +53,11 @@ article ul li::before {
 
 .footnotes hr {
   border: 1px solid red;
+}
+
+table.highlighttable th.filename {
+  border-bottom: 1px solid #c0c0c0;
+}
+table.highlighttable td.code {
+  width: 100%;
 }

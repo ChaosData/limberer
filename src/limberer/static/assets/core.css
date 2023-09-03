@@ -126,46 +126,65 @@ p {
   font-size: 10pt;
 }
 
-table {
+table:not(.highlighttable) {
   margin-bottom: 1rem;
   width: 100%;
 }
-table, th, td {
+table:not(.highlighttable) {
   border-collapse: collapse;
   border-spacing: 0;
   border: 1px solid #c0c0c0;
 }
 
-td, th {
+table:not(.highlighttable) th {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #c0c0c0;
+}
+
+table:not(.highlighttable) td {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #c0c0c0;
+}
+
+table:not(.highlighttable) td {
   padding: 8px;
   text-align: left;
   line-height: 20px;
   font-size: 10px;
 }
 
-td>ul {
+table:not(.highlighttable) th {
+  padding: 8px;
+  text-align: left;
+  line-height: 20px;
+  font-size: 10px;
+}
+
+table:not(.highlighttable) td>ul {
   margin-top: 0px;
   margin-bottom: 0px;
 }
-td>ol {
+table:not(.highlighttable) td>ol {
   margin-top: 0px;
   margin-bottom: 0px;
 }
 
-th {
+table:not(.highlighttable) th {
   color: white;
   background-color: black;
   font-weight: bold;
 }
 
-tr:nth-child(even) {
+table:not(.highlighttable) tr:nth-child(even) {
     background-color: #E7E9EB;
 }
-tr:nth-child(odd) {
+table:not(.highlighttable) tr:nth-child(odd) {
     background-color: #ffffff;
 }
 
-td {
+table:not(.highlighttable) td {
   min-height: 20px;
 }
 
@@ -374,4 +393,8 @@ div .two-col-fig>figure {
 article.appendix>.article-body>h1:nth-of-type(1):before {
   content: "Appendix " counter(appendix, upper-alpha) ": ";
   counter-increment: appendix;
+}
+
+div.linenodiv>pre {
+  line-height: 125%;
 }

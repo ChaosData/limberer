@@ -30,7 +30,7 @@ $ open projname.pdf
 ### Prerequisites
 
 ```
-$ sudo apt-get install pandoc highlight
+$ sudo apt-get install pandoc
 ```
 
 ***Note:*** If your distro has an older version of pandoc (e.g. 2.9.x), get it from <https://github.com/jgm/pandoc/releases/>.
@@ -296,14 +296,14 @@ are available in the default style/layout.
 
 
 ````markdown
-```js
+```js { lines="true" start="99" highlight="1,5" filename="HelloWorld.js" }
 let j = await fetch("https://wat.wat", {
   "headers": {
     "x-test": "foo"
   }
 }).then((res)=>res.json());
 ```
-<center>Example Snippet of Code</center>
+<p><center>Example Snippet of Code</center></p>
 
 ```js
 let j = await fetch("https://wat.wat", {
@@ -317,11 +317,12 @@ let j = await fetch("https://wat.wat", {
 
 The following settings can be configured in the project TOML:
 
-* `highlight` (defaults to `"molokai"`)
+* `highlight` (defaults to `"monokai"`)
 * `highlight_plaintext` (defaults to `"solarized-dark"`)
 * `highlight_font` (defaults to `"'DejaVu Sans Mono', monospace"`)
-* `highlight_style` (defaults to `"padding: 1rem; border-radius: 2px; overflow-x: auto;"`
-* `highlight_line_length` (defaults to `"74"`)
+* `highlight_style` (defaults to `"border-radius: 2px; overflow-x: auto;"`)
+* `highlight_padding` (defaults to `"padding: 0.5rem 1rem 0.5rem 1rem;"`)
+* `highlight_padding_lines` (defaults to `"padding: 0.25rem 0.5rem 0.25rem 0.5rem;")
 
 #### Breaks
 

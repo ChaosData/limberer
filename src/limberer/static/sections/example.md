@@ -33,14 +33,14 @@ Hi there.
 
 ## Code Snippet
 
-```js
+```js { lines="true" start="100" highlight="1,5" filename="HelloWorld.js" }
 let j = await fetch("https://wat.wat", {
   "headers": {
     "x-test": "foo"
   }
 }).then((res)=>res.json());
 ```
-<center>Example Snippet of Code</center>
+<p><center>Example Snippet of Code</center></p>
 
 <div class="pagebreak"></div>
 
@@ -52,6 +52,13 @@ let j = await fetch("https://wat.wat", {
 }).then((res)=>res.json());
 ```
 <figure><figcaption>Example Snippet of Code</figcaption></figure>
+
+```console
+$ foo -f bar
+$ sudo su
+# whoami
+root
+```
 
 ## Table Test
 

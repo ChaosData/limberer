@@ -33,11 +33,19 @@ import platform
 import base64
 from PIL import Image
 
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import get_lexer_by_name
+from pygments.styles import get_style_by_name
+
 titlecounter = 0
 headers = []
 metadata = []
 figurecount = 1
 args = None
+
+lexers = {}
+formatters = {}
 
 def stringify(content):
   out = []
@@ -69,53 +77,34 @@ def header(elem, doc):
   elif isinstance(elem, pf.CodeBlock):
     code = elem.text.encode()
     classes = elem.classes
+    attrs = elem.attributes
+    lang = 'text' if len(classes) == 0 else classes[0]
+    style = ""
+    if lang in ["text", "console"]:
+      style = get_style_by_name(config['highlight_plaintext'])
+    else:
+      style = get_style_by_name(config['highlight'])
+    opts = {
+      "style": style,
+      "noclasses": True,
+    }
+    if "lines" in attrs:
+      opts["linenos"] = True if attrs["lines"] == "true" else False
+      opts["cssstyles"] =  f"color: white; font-family: {config['highlight_font']}; {config['highlight_style']}; {config['highlight_padding_lines']};"
+    else:
+      opts["cssstyles"] =  f"color: white; font-family: {config['highlight_font']}; {config['highlight_style']}; {config['highlight_padding']};"
 
-    lang = 'txt' if len(classes) == 0 else classes[0]
-    if lang in ['bash', 'sh', 'console']:
-      proc = subprocess.run(['highlight', '--list-scripts=langs'], capture_output=True)
-      if proc.returncode == 0:
-        o = proc.stdout.decode('utf-8')
-        for line in o.split("\n"):
-          if line.startswith('Bash'):
-            lang = line.split(":")[1].strip().split(" ")[0]
-            break
-      if lang == 'txt':
-        if platform.system() == "Darwin":
-          lang = 'shellscript'
-        else:
-          lang = 'sh'
+    if "start" in attrs:
+      opts["linenostart"] = int(attrs["start"])
+    if "highlight" in attrs:
+      opts["hl_lines"] = [int(l) for l in attrs["highlight"].split(",")]
+    if "filename" in attrs:
+      opts["filename"] = attrs["filename"]
 
-    argv = ['highlight']
-    argv += ['-s', config['highlight_plaintext'] if lang == 'txt' or lang == 'console' else config['highlight']]
-    argv += ['-O' , 'html']
-    argv += ['--inline-css']
-    argv += ['-S' , lang]
-    argv += ['--font' , f"{config['highlight_font']}; {config['highlight_style']}"]
-    argv += ['-V', '-J' , config['highlight_line_length']]
-    #argv += ['-l', '-j', "3"] # probably best to do line numbers in css
-    argv += ['-f' , '--enclose-pre']
+    lexer = get_lexer_by_name(lang, stripall=True)
+    formatter = HtmlFormatter(**opts)
+    output = highlight(code, lexer, formatter)
 
-    #print(argv)
-    proc = subprocess.run(argv, input=code, capture_output=True)
-    if proc.returncode != 0:
-      sys.stderr.write("highlight returned non-zero for {}\n".format(argv))
-      sys.stderr.buffer.write(proc.stderr)
-      return elem
-
-    output = proc.stdout.decode('utf-8')
-    if lang == 'console':
-      start_pos = output.find('>')+1
-      end_pos = output.find('</pre>')
-      content = output[start_pos:end_pos]
-      lines = content.split('\n')
-      nlines = []
-      for line in lines:
-        if line.startswith('$$ '):
-          nlines.append(line.replace('$$', '#', 1))
-        else:
-          nlines.append(line)
-      ncontent = '\n'.join(nlines)
-      output = output[:start_pos] + ncontent + output[end_pos:]
     return pf.RawBlock(output, format='html')
   elif isinstance(elem, pf.Figure):
     imgattrs = elem.content[0].content[0].attributes

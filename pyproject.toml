@@ -1,6 +1,6 @@
 [project]
 name = "limberer"
-version = "0.5.1"
+version = "0.6"
 authors = [
   { name = "Jeff Dileo", email = "jtdileo@gmail.com" },
 ]
@@ -20,9 +20,10 @@ dependencies = [
   "panflute",
   "chevron",
   "weasyprint",
-  "toml",
+  "rtoml",
   "pillow",
   "beautifulsoup4",
+  "Pygments",
 ]
 
 [project.urls]
