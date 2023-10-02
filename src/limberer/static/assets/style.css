@@ -11,6 +11,7 @@
 html {
   color: black;
   font-family: Comic Sans MS;
+  line-height: 1.25;
 }
 
 table:not(.highlighttable) {
@@ -39,12 +40,16 @@ table:not(.highlighttable) tr:nth-child(odd) {
 }
 
 table:not(.highlighttable) td {
-  min-height: 20px;
+  min-height: 1rem;
 }
 
 #cover>div#who {
   background: #B57EDC;
   color: white;
+}
+
+sup {
+  vertical-align: top;
 }
 
 article ul li::before {

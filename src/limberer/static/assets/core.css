@@ -127,8 +127,8 @@ p {
 }
 
 table:not(.highlighttable) {
-  margin-bottom: 1rem;
   width: 100%;
+  margin-bottom: 0.25rem;
 }
 table:not(.highlighttable) {
   border-collapse: collapse;
@@ -149,17 +149,31 @@ table:not(.highlighttable) td {
 }
 
 table:not(.highlighttable) td {
-  padding: 8px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
   text-align: left;
-  line-height: 20px;
-  font-size: 10px;
+  font-size: 9pt;
 }
 
 table:not(.highlighttable) th {
-  padding: 8px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
   text-align: left;
-  line-height: 20px;
-  font-size: 10px;
+  font-size: 9pt;
+}
+
+table:not(.highlighttable) td>p {
+  font-size: 9pt;
+  margin: 0;  
+}
+
+table:not(.highlighttable) th>p {
+  font-size: 9pt;
+  margin: 0;  
 }
 
 table:not(.highlighttable) td>ul {
@@ -185,7 +199,7 @@ table:not(.highlighttable) tr:nth-child(odd) {
 }
 
 table:not(.highlighttable) td {
-  min-height: 20px;
+  min-height: 1rem;
 }
 
 #cover {
@@ -209,6 +223,10 @@ table:not(.highlighttable) td {
   width: 100%;
 }
 
+article.toc {
+  counter-reset: htmltest;
+}
+
 ul.toc {
   padding-left: 0px;
   list-style-type: none;
@@ -219,17 +237,20 @@ ul.toc>ul {
 }
 
 ul.toc li {
-  margin-top: 0.25em;
+  margin-top: 0.25rem;
 }
 ul.toc li::before {
   content: none;
 }
 a.toc {
   display: flex;
+  align-items: flex-end;
   text-decoration: none;
   color: black;
+  width: 100%;
 }
 div.toctext::before {
+  content: "Default Value";
   content: target-text(attr(href));
 }
 div.toctext {
@@ -237,11 +258,13 @@ div.toctext {
 }
 div.tocpagenr {
   border-bottom: 1pt dotted black;
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
+  flex-grow: 1;
 }
-div.tocpagenr::after {
+div.tocpagenrval {
+}
+div.tocpagenrval::after {
+  counter-increment: htmltest;
+  content: counter(htmltest);
   content: target-counter(attr(href), page);
 }
 
@@ -311,15 +334,26 @@ article ol li::before {
   content: "\00a0\00a0\00a0";
 }
 
-article li {
+article ul>li {
+  list-style-position: inside;
+  text-indent: -2rem;
+  padding-left: 2rem;
+}
+
+article .toc li {
   line-height: 1.5;
+}
+
+article ul.toc>li {
+  text-indent: 0rem;
+  padding-left: 0rem;
 }
 
 article ul li::before {
   color: black;
   content: '• ';
   font-size: 10pt;
-  padding-right: 1em;
+  padding-right: 1rem;
 }
 
 .columns section {
@@ -329,9 +363,8 @@ article ul li::before {
 }
 .columns section p {
   text-align: justify;
-}
-.columns section p:first-of-type {
-  font-weight: 700;
+  word-break: break-word;
+  word-spacing: -2px;
 }
 
 article figure {
@@ -374,11 +407,11 @@ div .two-col-fig>figure {
 }
 
 .footnotes ol li {
-  line-height: 1;
+  line-height: 1.1;
 }
 .footnotes ol li::before {
   content: none;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .footnote-ref {
