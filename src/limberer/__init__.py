@@ -265,6 +265,9 @@ def main():
       templatepath = args.template
     shutil.copytree(templatepath, absprojpath)
 
+    dotgitdir = os.path.join(absprojpath, '.git')
+    shutil.rmtree(dotgitdir)
+
     projname = os.path.basename(absprojpath)
     if os.path.exists(os.path.join(absprojpath, "project.toml")):
       os.rename(os.path.join(absprojpath, "project.toml"),
