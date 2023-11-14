@@ -266,7 +266,8 @@ def main():
     shutil.copytree(templatepath, absprojpath)
 
     dotgitdir = os.path.join(absprojpath, '.git')
-    shutil.rmtree(dotgitdir)
+    if os.path.exists(dotgitdir):
+      shutil.rmtree(dotgitdir)
 
     projname = os.path.basename(absprojpath)
     if os.path.exists(os.path.join(absprojpath, "project.toml")):
