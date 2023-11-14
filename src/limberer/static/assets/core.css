@@ -327,11 +327,32 @@ article ul {
 /*weasyprint currently gets this wrong: https://github.com/Kozea/WeasyPrint/issues/1557*/
 article ol {
   list-style-position: outside;
-  padding-left: 0;
-  margin-left: 1rem;
+  list-style-position: inside; /* need inside here or multiple digits shift left past the left margin */
+  padding-left: 1rem;
+  margin-left: -1rem;
 }
+/*
 article ol li::before {
   content: "\00a0\00a0\00a0";
+}*/
+article ol>li:not(:has(p)) { /* bare lists elements that wrap*/
+  text-indent: -1.11rem;
+  padding-left: 1.11rem;
+  margin-left: 0rem;
+}
+article ol>li:has(p) { /* lists that contain <p> */
+  text-indent: -1.11rem;
+  padding-left: 1.11rem
+}
+article ol>li>p {
+  text-indent: 0rem;
+  margin-left: 0rem;
+  padding-left: 0.01rem;
+}
+article ol>li>p:nth-of-type(1) {
+  display: inline;
+  margin-left: 0rem;
+  padding-left: 0rem;
 }
 
 article ul>li {
@@ -431,3 +452,5 @@ article.appendix>.article-body>h1:nth-of-type(1):before {
 div.linenodiv>pre {
   line-height: 125%;
 }
+
+
