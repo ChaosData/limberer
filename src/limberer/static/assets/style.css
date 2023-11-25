@@ -6,6 +6,10 @@
   @bottom-center {
     content: "© <year> Example Corp.";
   }
+  @footnote {
+    border-top: 2px solid red;
+    float: bottom;
+  }
 }
 
 html {

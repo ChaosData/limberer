@@ -1,0 +1,10 @@
+*.bak
+Pipfile.lock
+dist/
+build/
+*.egg-info
+testing/
+CMakeLists.txt
+.*
+__pycache__
+test/

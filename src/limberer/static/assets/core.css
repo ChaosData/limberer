@@ -44,6 +44,12 @@
   margin-left: 1in;
   margin-right: 1in;
   margin-bottom: 1in;
+
+  @footnote {
+    border-top: 2px solid black;
+    float: bottom;
+    padding-top: 0.5rem;
+  }
 }
 @page cover {
   @top-left {
@@ -66,6 +72,7 @@ html {
   font-weight: 300;
   line-height: 1.0;
   counter-reset: appendix;
+  counter-reset: footnotecount;
 }
 
 strong {
@@ -168,12 +175,12 @@ table:not(.highlighttable) th {
 
 table:not(.highlighttable) td>p {
   font-size: 9pt;
-  margin: 0;  
+  margin: 0;
 }
 
 table:not(.highlighttable) th>p {
   font-size: 9pt;
-  margin: 0;  
+  margin: 0;
 }
 
 table:not(.highlighttable) td>ul {
@@ -429,6 +436,7 @@ div .two-col-fig>figure {
 
 .footnotes ol li {
   line-height: 1.1;
+  counter-increment: footnotecount list-item;
 }
 .footnotes ol li::before {
   content: none;
@@ -453,4 +461,35 @@ div.linenodiv>pre {
   line-height: 125%;
 }
 
+span.footnote {
+  float: footnote;
+  width: 6.5in;
+  padding-left: 0rem;
+  margin-left: 1.5rem;
+  text-indent: initial;
+  margin-top: initial;
+  text-indent: -1.11rem;
+  padding-left: 1.11rem;
+  counter-increment: footnotecount;
+}
+
+/*.footnote::footnote-call {*/ /*weasyprint doesn't match this*/
+::footnote-call {
+  /*display: none;*/ /*doesn't work, crashes*/
+  content: "";
+}
+
+.footnote-ref>sup {
+  font-size: 0.6rem;
+  vertical-align: super;
+}
+
+.footnote::footnote-marker {
+  content: counter(footnotecount) ".";
+  /*color: red;*/ /*doesn't work in weasyprint*/
+  display: inline-block;
+  padding-right: 0.25rem;
+  text-indent: initial;
+  margin-top: initial;
+}
 

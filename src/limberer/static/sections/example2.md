@@ -3,6 +3,7 @@ columns: true
 title: Example2
 foo: bar
 classes: aaa bbb ccc
+end_footnotes: true
 ---
 
 ## AAA{#aaah2}

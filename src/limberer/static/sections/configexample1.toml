@@ -3,7 +3,9 @@ pre = """
 Hello
 
 * foo
-* bar
+* bar[^test]
+
+[^test]: watwat
 """
 post = """
 world.

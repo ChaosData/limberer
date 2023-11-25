@@ -38,6 +38,7 @@ import subprocess
 import io
 from bs4 import BeautifulSoup
 import re
+import time
 
 from .pf import entrypoint
 
@@ -101,6 +102,8 @@ def parse_args():
                       default="",
                       help='Create from alternative template path instead of the built-in default.')
   build = subparsers.add_parser('build')
+  build.add_argument('-P', '--no-pdf', action='store_true',
+                      help='Do not emit a PDF.')
   build.add_argument('-E', '--emit-html', metavar='<path>', type=str,
                      default="",
                      help='Emit post-processed HTML to <path>.')
@@ -220,6 +223,8 @@ def convert_fancy(content, section_name, opts, toc, args):
   for _ider in _iders:
     _ider['id'] = f"{section_name}-{_ider['id']}"
 
+  #opts["end_footnotes"] = True
+
   _fns = soup.find(class_="footnotes")
   if _fns is not None:
     _fns = _fns.extract()
@@ -229,17 +234,28 @@ def convert_fancy(content, section_name, opts, toc, args):
     del _fns['id']
     for _a in soup.find_all(class_="footnote-ref"):
       _a['href'] = f"#{section_name}-{_a['href'][1:]}"
-      _a.sup.string = str(footnotecount - 1 + int(_a.sup.string))
+      _a.sup.string = str(footnotecount)
+      footnotecount += 1
     for _a in _fns.find_all(class_="footnote-back"):
       _a['href'] = f"#{section_name}-{_a['href'][1:]}"
     _fns.name = 'div'
-    footnotecount += len(__fns)
+    if "end_footnotes" in opts and (opts["end_footnotes"] == True or opts["end_footnotes"].lower() == "true"):
+      footnotes = str(_fns)
 
-    footnotes = str(_fns)
+  if "end_footnotes" not in opts or (opts["end_footnotes"] != True and opts["end_footnotes"].lower() != "true"):
+    for _a in soup.find_all(class_="footnote-ref"):
+      _id = _a['href'][1:]
+      fn = _fns.find(id=_id)
+      tag = soup.new_tag("span", attrs={"class": "footnote"})
+      tag['id'] = fn['id']
+      for child in list(fn.p.children):
+        tag.append(child)
+      _a.insert_after(tag)
+
   html = str(soup)
-
   opts['html'] = html
-  opts['footnotes'] = footnotes
+  if "end_footnotes" in opts and (opts["end_footnotes"] == True or opts["end_footnotes"].lower() == "true"):
+    opts['footnotes'] = footnotes
   opts['opts'] = opts # we occasionally need top.down.variable.paths to resolve abiguity
   return html
 
@@ -360,11 +376,11 @@ def build(args):
         content += "\n\n"
         content += _content
 
-      html = convert_fancy(content, section_name, opts, toc, args)
-
       template = section_template
       if "alt" in section:
         template = open_subpath('templates/{}.html'.format(section['alt']), 'r').read()
+
+      html = convert_fancy(content, section_name, opts, toc, args) # sets opts["html"]
       r = chevron.render(template, opts)
       sections.append(r)
     elif section['type'] == 'toc':
@@ -423,9 +439,23 @@ def build(args):
       fd.flush()
       fd.close()
 
-  h = weasyprint.HTML(string=report_html, base_url='./', url_fetcher=fetcher)
-  h.write_pdf("./" + '.pdf'.join(fname.rsplit('.toml', 1)))
+  h = None
+  if args.debug:
+    t0 = time.time()
+    h = weasyprint.HTML(string=report_html, base_url='./', url_fetcher=fetcher)
+    t1 = time.time()
+    print("weasyprint.HTML: {}".format(t1-t0))
+  else:
+    h = weasyprint.HTML(string=report_html, base_url='./', url_fetcher=fetcher)
 
+  if not args.no_pdf:
+    if args.debug:
+      t0 = time.time()
+      h.write_pdf("./" + '.pdf'.join(fname.rsplit('.toml', 1)))
+      t1 = time.time()
+      print("write_pdf: {}".format(t1-t0))
+    else:
+      h.write_pdf("./" + '.pdf'.join(fname.rsplit('.toml', 1)))
 
 if __name__ == "__main__":
   main()

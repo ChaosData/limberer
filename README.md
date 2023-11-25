@@ -149,6 +149,8 @@ supported options are the following:
 * `columns`: Whether or not to use the 2-column format for the section.
 * `title`: Section title for 2-column format.
 * `classes`: List of HTML class names to apply to the section (`<article>`)
+* `end_footnotes`: Footnotes will be placed at the end of the section instead
+   of at/near the site of placement.
 
 Additionally, the following options may be passed in a section entry within the
 project TOML:
