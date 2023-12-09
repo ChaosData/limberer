@@ -1,0 +1,11 @@
+<thing>
+  <title>XML Example</title>
+  <pre>wat</pre>
+  <post>wat</post>
+  <entries>
+    <entry a="hello" b="world"/>
+    <entry a="hello" b="there">world</entry>
+    <entry a="hello" b="world"/>
+  </entries>
+</thing>
+

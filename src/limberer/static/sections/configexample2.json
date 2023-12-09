@@ -1,0 +1,10 @@
+{
+  "title": "Config Example 2",
+  "pre": "wat",
+  "post": "wat",
+  "entries": [
+    {"a": "hello", "b": "world"},
+    {"a": "hello", "b": "world"},
+    {"a": "hello", "b": "world"}
+  ]
+}

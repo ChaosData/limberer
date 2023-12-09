@@ -39,6 +39,7 @@ import io
 from bs4 import BeautifulSoup
 import re
 import time
+from collections import defaultdict
 
 from .pf import entrypoint
 
@@ -294,6 +295,77 @@ def main():
       shutil.copyfile(os.path.join(staticpath, "project.toml"),
                 os.path.join(absprojpath, projname + ".toml"))
 
+# modified from https://stackoverflow.com/a/10076823
+# for simplicity of traversal from mustache, every element will always
+# correspond to a dict object with a '_text_' key set (could be None or ''),
+# such as {'_text_': None} instead of the traditional pattern mapping elements
+# without attributes or children to raw strings or None if they also contain no
+# textContent. Additionally, for similar reasons, attribute names are prefixed
+# with '_' instead of '@'.
+def etree_to_dict(t):
+  d = {t.tag: {'_text_': None}}
+  children = list(t)
+  if children:
+    dd = defaultdict(list)
+    for dc in map(etree_to_dict, children):
+      for k, v in dc.items():
+        dd[k].append(v)
+    d = {t.tag: {k: v[0] if len(v) == 1 else v
+           for k, v in dd.items()}}
+  if t.attrib:
+    d[t.tag].update(('_' + k, v)
+            for k, v in t.attrib.items())
+  if t.text:
+    text = t.text.strip()
+    d[t.tag]['_text_'] = text
+  return d
+
+def parse_config(path, args):
+  _config = None
+  name = os.path.basename(path).replace(".","_")
+  try:
+    f = open_subpath(path, 'r')
+
+    if path.endswith(".toml"):
+      _config = toml.loads(f.read())
+    elif path.endswith(".json"):
+      import json
+      _config = json.loads(f.read())
+    elif path.endswith(".xml"):
+      from xml.etree import ElementTree
+      # per https://github.com/martinblech/xmltodict/issues/321#issuecomment-1452361644 ,
+      # this should be safe without defusedxml on python 3.9+, which is already
+      # the minimum supported version
+      e = ElementTree.XML(f.read())
+      _config = {}
+      _config[name] = etree_to_dict(e)
+      _config["xml"] = _config[name]
+    elif path.endswith(".csv") or path.endswith(".ncsv"):
+      import csv
+      reader = csv.reader(f)
+      _config = {}
+      if path.endswith(".ncsv"):
+        _config[name] = list(reader)[1:]
+      else:
+        _config[name] = list(reader)
+      _config["csv"] = _config[name]
+    elif path.endswith(".dcsv"):
+      import csv
+      reader = csv.DictReader(f)
+      _config = {}
+      _config[name] = list(reader)
+      _config["dcsv"] = _config[name]
+    else:
+      raise Exception("Unsupported file extension.")
+  except Exception as err:
+    sys.stderr.write(f"error: error processing {path}\n")
+    sys.stderr.write(str(err))
+    sys.stderr.write("\n")
+    sys.exit(1)
+  if args.debug:
+    print(f"config: {path}: {str(_config)}")
+  return _config
+
 def build(args):
   global footnotecount
   global appendix
@@ -322,9 +394,9 @@ def build(args):
     "highlight_line_length": "74",
   }
 
-  config = config | toml.loads(open(fname, 'r').read())
+  config = config | parse_config(fname, args)
   for path in args.configs[1:]:
-    config = config | toml.loads(open(path, 'r').read())
+    config = config | parse_config(path, args)
 
   config['config'] = config # we occasionally need top.down.variable.paths to resolve abiguity
 
@@ -352,7 +424,7 @@ def build(args):
       opts['section_name'] = section_name
 
       if "conf" in section:
-        opts = opts | toml.loads(open_subpath(section['conf'], 'r').read())
+        opts = opts | parse_config(section['conf'], args)
       if appendix:
         opts['appendix'] = True
       content = chevron.render(raw_content, opts)
@@ -370,7 +442,7 @@ def build(args):
         _opts['section_name'] = _section_name
 
         if "conf" in _section:
-          _opts = _opts | toml.loads(open_subpath(_section['conf'], 'r').read())
+          _opts = _opts | parse_config(_section['conf'], args)
         _content = chevron.render(_raw_content, _opts)
 
         content += "\n\n"
@@ -398,7 +470,7 @@ def build(args):
       template = open_subpath(f"templates/{section['type']}.{format}", 'r').read()
       _config = {} | config | section
       if "conf" in section:
-        _config = _config | toml.loads(open_subpath(section['conf'], 'r').read())
+        _config = _config | parse_config(section['conf'], args)
       if format == 'md':
         section_name = section['name']
         opts = _config

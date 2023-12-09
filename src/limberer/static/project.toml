@@ -14,6 +14,10 @@ sections = [
   { name = "example2", type = "section" },
   { name = "example3", type = "section", cont = true },
   { name = "configexample", type = "section", conf = "sections/configexample1.toml" },
-  { name = "configexample", type = "section", conf = "sections/configexample2.toml", cont = true },
+  { name = "configexample", type = "section", conf = "sections/configexample2.json", cont = true },
+  { name = "xmlexample", type = "section", conf = "sections/configexample3.xml" },
+  { name = "csvexample", type = "section", conf = "sections/configexample4.csv" },
+  { name = "dcsvexample", type = "section", conf = "sections/configexample5.dcsv" },
+  { name = "ncsvexample", type = "section", conf = "sections/configexample6.ncsv" },
 ]
 
