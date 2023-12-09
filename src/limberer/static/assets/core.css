@@ -136,8 +136,6 @@ p {
 table:not(.highlighttable) {
   width: 100%;
   margin-bottom: 0.25rem;
-}
-table:not(.highlighttable) {
   border-collapse: collapse;
   border-spacing: 0;
   border: 1px solid #c0c0c0;
@@ -148,11 +146,21 @@ table:not(.highlighttable) th {
   border-spacing: 0;
   border: 1px solid #c0c0c0;
 }
+table.highlighttable th {
+  border-collapse: inherit;
+  border-spacing: inherit;
+  border: inherit;
+}
 
 table:not(.highlighttable) td {
   border-collapse: collapse;
   border-spacing: 0;
   border: 1px solid #c0c0c0;
+}
+table.highlighttable td {
+  border-collapse: inherit;
+  border-spacing: inherit;
+  border: inherit;
 }
 
 table:not(.highlighttable) td {
@@ -163,6 +171,14 @@ table:not(.highlighttable) td {
   text-align: left;
   font-size: 9pt;
 }
+table.highlighttable td {
+  padding-top: inherit;
+  padding-bottom: inherit;
+  padding-left: inherit;
+  padding-right: inherit;
+  text-align: inherit;
+  font-size: inherit;
+}
 
 table:not(.highlighttable) th {
   padding-top: 0.25rem;
@@ -172,15 +188,51 @@ table:not(.highlighttable) th {
   text-align: left;
   font-size: 9pt;
 }
+table.highlighttable th {
+  padding-top: inherit;
+  padding-bottom: inherit;
+  padding-left: inherit;
+  padding-right: inherit;
+  text-align: inherit;
+  font-size: inherit;
+}
 
 table:not(.highlighttable) td>p {
   font-size: 9pt;
-  margin: 0;
+}
+table.highlighttable td>p {
+  font-size: inherit;
+}
+
+table:not(.highlighttable) td>p:not(.caption) {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+table.highlighttable td>p:not(.caption) {
+  margin-top: inherit;
+  margin-bottom: inherit;
+}
+
+table:not(.highlighttable) td>p:first-child {
+  margin-top: 0;
+}
+table.highlighttable td>p:first-child {
+  margin-top: inherit;
+}
+table:not(.highlighttable) td>p:last-child {
+  margin-bottom: 0;
+}
+table.highlighttable td>p:last-child {
+  margin-bottom: inherit;
 }
 
 table:not(.highlighttable) th>p {
   font-size: 9pt;
   margin: 0;
+}
+table.highlighttable th>p {
+  font-size: inherit;
+  margin: inherit;
 }
 
 table:not(.highlighttable) td>ul {
@@ -197,16 +249,30 @@ table:not(.highlighttable) th {
   background-color: black;
   font-weight: bold;
 }
+table.highlighttable th {
+  color: inherit;
+  background-color: inherit;
+  font-weight: inherit;
+}
 
 table:not(.highlighttable) tr:nth-child(even) {
     background-color: #E7E9EB;
 }
+table.highlighttable tr:nth-child(even) {
+    background-color: inherit;
+}
 table:not(.highlighttable) tr:nth-child(odd) {
     background-color: #ffffff;
+}
+table.highlighttable tr:nth-child(odd) {
+    background-color: inherit;
 }
 
 table:not(.highlighttable) td {
   min-height: 1rem;
+}
+table.highlighttable td {
+  min-height: inherit;
 }
 
 #cover {
@@ -461,6 +527,23 @@ div.linenodiv>pre {
   line-height: 125%;
 }
 
+div.highlight>pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0rem;
+}
+table.highlighttable .code>div>pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0rem;
+  padding: 0.5rem 0.25rem 0.5rem 0.25rem;
+}
+
+div.highlight {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 span.footnote {
   float: footnote;
   width: 6.5in;
@@ -491,5 +574,10 @@ span.footnote {
   padding-right: 0.25rem;
   text-indent: initial;
   margin-top: initial;
+}
+
+.caption {
+  margin-top: -0.5rem;
+  text-align: center;
 }
 

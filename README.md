@@ -305,7 +305,7 @@ let j = await fetch("https://wat.wat", {
   }
 }).then((res)=>res.json());
 ```
-<p><center>Example Snippet of Code</center></p>
+<p class="caption">Example Snippet of Code</p>
 
 ```js
 let j = await fetch("https://wat.wat", {
@@ -314,7 +314,7 @@ let j = await fetch("https://wat.wat", {
   }
 }).then((res)=>res.json());
 ```
-<figure><figcaption>Example Snippet of Code with a figure prefix</figcaption></figure>
+<figure class="caption"><figcaption>Example Snippet of Code with a figure prefix</figcaption></figure>
 ````
 
 The following settings can be configured in the project TOML:

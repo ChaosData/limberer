@@ -54,7 +54,7 @@ let j = await fetch("https://wat.wat", {
   }
 }).then((res)=>res.json());
 ```
-<p><center>Example Snippet of Code</center></p>
+<p class="caption">Example Snippet of Code</p>
 
 <div class="pagebreak"></div>
 
@@ -65,7 +65,7 @@ let j = await fetch("https://wat.wat", {
   }
 }).then((res)=>res.json());
 ```
-<figure><figcaption>Example Snippet of Code</figcaption></figure>
+<figure class="caption"><figcaption>Example Snippet of Code with a figure prefix</figcaption></figure>
 
 ```console
 $ foo -f bar

@@ -317,8 +317,8 @@ def build(args):
     "highlight_plaintext": "solarized-dark",
     "highlight_font": "'DejaVu Sans Mono', monospace",
     "highlight_style": "border-radius: 2px; overflow-x: auto;",
-    "highlight_padding": "padding: 0.5rem 1rem 0.5rem 1rem;",
-    "highlight_padding_lines": "padding: 0.25rem 0.5rem 0.25rem 0.5rem;",
+    "highlight_padding": "padding: 0.5rem 0.25rem 0.5rem 0.5rem;",
+    "highlight_padding_lines": "padding: 0.25rem 0.25rem 0.25rem 0.25rem;",
     "highlight_line_length": "74",
   }
 

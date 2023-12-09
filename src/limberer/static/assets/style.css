@@ -25,9 +25,15 @@ table:not(.highlighttable) {
 table:not(.highlighttable) th {
   border: 1px solid #c0c0c0;
 }
+table.highlighttable th {
+  border: inherit;
+}
 
 table:not(.highlighttable) td {
   border: 1px solid #c0c0c0;
+}
+table.highlighttable td {
+  border: inherit;
 }
 
 table:not(.highlighttable) th {
@@ -35,15 +41,20 @@ table:not(.highlighttable) th {
   background-color: black;
   font-weight: bold;
 }
+table.highlighttable th {
+  color: inherit;
+  background-color: inherit;
+  font-weight: inherit;
+}
 
-table:not(.highlighttable) tr:nth-child(even) {
+table:not(.highlighttable)>tbody>tr:nth-child(even) {
     background-color: #E7E9EB;
 }
-table:not(.highlighttable) tr:nth-child(odd) {
+table:not(.highlighttable)>tbody>tr:nth-child(odd) {
     background-color: #ffffff;
 }
 
-table:not(.highlighttable) td {
+td {
   min-height: 1rem;
 }
 
