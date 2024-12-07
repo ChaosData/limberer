@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Copyright (c) 2023 Jeff Dileo.
+# Copyright (c) 2024 Google LLC.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,6 +29,7 @@ import sys
 import argparse
 import os
 import os.path
+import urllib.parse
 import shutil
 import rtoml as toml
 from collections.abc import Callable
@@ -47,13 +49,13 @@ from .pf import entrypoint
 def fetcher(url):
   u = None
   if url.startswith("file://"):
-    u = url[7:]
+    u = urllib.parse.unquote(url[7:])
   else:
     u = "./" + url
   cwd = os.path.abspath(".")
   target = os.path.abspath(u)
   if target.startswith(cwd + os.sep):
-    return weasyprint.default_url_fetcher("file://" + target)
+    return weasyprint.default_url_fetcher("file://" + urllib.parse.quote(target))
   else:
     sys.stderr.write("invalid url: " + repr(url) + "\n")
     sys.exit(1)
