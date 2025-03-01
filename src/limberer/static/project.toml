@@ -1,7 +1,8 @@
 title = "Example Document"
 subheading = "Limberer Made Easy"
 version = "Version 0.1 DRAFT"
-#label = ""
+group = "Limberer Team"
+#label = "CONFIDENTIAL"
 
 authors = [
   { name = "Example Person", email = "example@example.com" },
@@ -19,5 +20,7 @@ sections = [
   { name = "csvexample", type = "section", conf = "sections/configexample4.csv" },
   { name = "dcsvexample", type = "section", conf = "sections/configexample5.dcsv" },
   { name = "ncsvexample", type = "section", conf = "sections/configexample6.ncsv" },
+  { name = "compositetable-text", type = "section" },
+  { name = "compositetableexample", type = "section", conf = "sections/compositetable/template.toml", cont = true},
 ]
 

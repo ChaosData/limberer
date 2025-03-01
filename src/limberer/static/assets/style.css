@@ -1,20 +1,34 @@
 @page {
+  @top-left {
+    background-size: 1in;
+    width: 1.75in;
+    height: auto;
+  }
+
   @bottom-right {
-    background: #B57EDC;
+    background: black;
     color: #ffffff;
   }
   @bottom-center {
     content: "© <year> Example Corp.";
   }
   @footnote {
-    border-top: 2px solid red;
+    border-top: 2px solid black;
     float: bottom;
+  }
+}
+
+@page cover {
+  @top-left {
+    background-size: 1in;
+    width: 1.75in;
+    height: auto;
   }
 }
 
 html {
   color: black;
-  font-family: Comic Sans MS;
+  font-family: Arial;
   line-height: 1.25;
 }
 
@@ -58,8 +72,13 @@ td {
   min-height: 1rem;
 }
 
-#cover>div#who {
-  background: #B57EDC;
+#cover .title h3 {
+  font-weight: normal;
+}
+
+
+#cover>div#who>.who {
+  background: black;
   color: white;
 }
 
@@ -68,11 +87,11 @@ sup {
 }
 
 article ul li::before {
-  color: #E6E6FA;
+  color: #dad4e0;
 }
 
 .footnotes hr {
-  border: 1px solid red;
+  border: 1px solid black;
 }
 
 table.highlighttable th.filename {
@@ -80,4 +99,14 @@ table.highlighttable th.filename {
 }
 table.highlighttable td.code {
   width: 100%;
+}
+
+table.composite-head {
+  margin-bottom: 0;
+}
+table.composite-head, table.composite-head th, table.composite-head td {
+  border-bottom: 0px;
+}
+table.composite-body>tbody>tr:nth-child(even) {
+  background-color: white;
 }

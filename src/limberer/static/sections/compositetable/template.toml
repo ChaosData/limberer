@@ -1,0 +1,60 @@
+title = "TKTK"
+date = "1 January 2025"
+category = "Journal Entry"
+description = """
+The nested code formatting seems to be working well.
+
+```C++
+#include <vector>
+
+template<typename T>
+class TD;
+
+int main() {
+  std::vector<bool> vb{true, false};
+  TD<decltype(vb[0])> td;
+
+  return 0;
+}
+```
+
+<table>
+<thead>
+<tr class="header">
+<th>First Header</th>
+<th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Content Cell</td>
+<td>
+1. Content
+    * Foo
+1. Content
+</td>
+</tr>
+<tr class="even">
+<td>Content Cell</td>
+<td>
+* aaa
+    * bbb
+    1. bbb
+        * ccc
+            1. ddd
+1. aaa
+    * bbb
+        1. ccc
+            * ddd
+    1. bbb
+</td>
+</tr>
+</tbody>
+</table>
+
+
+"""
+
+notes = """
+* remember to buy bread.
+"""

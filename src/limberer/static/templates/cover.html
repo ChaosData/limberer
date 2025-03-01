@@ -1,24 +1,30 @@
     <article id="cover">
-      <div id="title">
+      <div id="title" class="title">
         <h1>
-          {{title}}
+          {{{title}}}
         </h1>
-        {{#subheading}}
-        <br>
         <h2>
+        {{#subheading}}
           {{subheading}}
         {{/subheading}}
-        {{#version}}
-          <br>
-          {{version}}
-        {{/version}}
         </h2>
+      </div>
+      <div id="labels" class="title">
         {{#label}}
-        <br><br>
-        <b style="font-size: 20pt">{{label}}</b>
+          <h3><b>{{label}}</b></h3>
         {{/label}}
       </div>
+
       <div id="who">
+        <div class="title prefloat">
+          {{#group}}
+            <h3>{{group}}</h3>
+          {{/group}}
+          {{#version}}
+            <h3>{{version}}</h3>
+          {{/version}}
+        </div>
+        <div class="who">
         <div style="width: 40%;">
           <p>
           {{#authors}}
@@ -32,6 +38,7 @@
             {{email}}<br>
           {{/authors}}
           </p>
+        </div>
         </div>
       </div>
     </article>

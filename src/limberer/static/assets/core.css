@@ -84,7 +84,7 @@ body {
   counter-reset: figurecount;
 }
 
-#title {
+#cover .title {
   page: cover;
   margin: 0.5in 1in 0in 1in;
 }
@@ -281,8 +281,21 @@ table.highlighttable td {
 }
 
 #cover>div#title {
+
 }
 #cover>div#who {
+  position: absolute;
+  bottom: 0px;
+  min-height: 3in;
+  width: 100%;
+}
+#cover>div#who>.prefloat {
+  min-height: 1in;
+  width: 100%;
+  bottom: 1in;
+}
+
+#cover>div#who>.who {
   background: black;
   color: white;
   white-space: pre-wrap;
@@ -291,8 +304,6 @@ table.highlighttable td {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  position: absolute;
-  bottom: 0px;
   width: 100%;
 }
 
@@ -399,7 +410,7 @@ article ul {
 
 /*weasyprint currently gets this wrong: https://github.com/Kozea/WeasyPrint/issues/1557*/
 article ol {
-  list-style-position: outside;
+  /*list-style-position: outside;*/
   list-style-position: inside; /* need inside here or multiple digits shift left past the left margin */
   padding-left: 1rem;
   margin-left: -1rem;
@@ -409,20 +420,29 @@ article ol li::before {
   content: "\00a0\00a0\00a0";
 }*/
 article ol>li:not(:has(p)) { /* bare lists elements that wrap*/
-  text-indent: -1.11rem;
-  padding-left: 1.11rem;
+  text-indent: -1rem;
+  padding-left: 1rem;
   margin-left: 0rem;
 }
 article ol>li:has(p) { /* lists that contain <p> */
-  text-indent: -1.11rem;
-  padding-left: 1.11rem
+  text-indent: -1rem;
+  padding-left: 1rem
 }
 article ol>li>p {
   text-indent: 0rem;
   margin-left: 0rem;
   padding-left: 0.01rem;
 }
+article ol>li:has(p) div.highlight {
+  text-indent: initial;
+}
+
 article ol>li>p:nth-of-type(1) {
+  display: inline;
+  margin-left: 0rem;
+  padding-left: 0rem;
+}
+article ul>li>p:nth-of-type(1) {
   display: inline;
   margin-left: 0rem;
   padding-left: 0rem;
@@ -430,8 +450,8 @@ article ol>li>p:nth-of-type(1) {
 
 article ul>li {
   list-style-position: inside;
-  text-indent: -2rem;
-  padding-left: 2rem;
+  text-indent: -1rem;
+  padding-left: 1rem;
 }
 
 article .toc li {
@@ -443,11 +463,11 @@ article ul.toc>li {
   padding-left: 0rem;
 }
 
-article ul li::before {
+article ul>li::before {
   color: black;
   content: '• ';
   font-size: 10pt;
-  padding-right: 1rem;
+  padding-right: 0.35rem;
 }
 
 .columns section {
@@ -459,6 +479,7 @@ article ul li::before {
   text-align: justify;
   word-break: break-word;
   word-spacing: -2px;
+  hyphens: auto;
 }
 
 article figure {
